@@ -42,22 +42,28 @@ describe("Project pages", () => {
       await renderProjectPage("maconfai");
       expect(screen.getByText("maconfai")).toBeInTheDocument();
       expect(
-        screen.getByText("Partagez vos configurations AI en un instant")
+        screen.getByText(
+          "Gestionnaire de skills minimal pour Claude Code, Cursor et Codex"
+        )
       ).toBeInTheDocument();
     });
 
     it("displays the installation command", async () => {
       await renderProjectPage("maconfai");
-      expect(screen.getByText("pip install maconfai")).toBeInTheDocument();
+      expect(
+        screen.getByText("npx maconfai install owner/repo")
+      ).toBeInTheDocument();
     });
 
     it("displays features", async () => {
       await renderProjectPage("maconfai");
       expect(
-        screen.getByText(/Import\/export de configurations/)
+        screen.getByText(
+          /Installation de skills depuis GitHub ou un répertoire local/
+        )
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Registry communautaire/)
+        screen.getByText(/Support multi-agents/)
       ).toBeInTheDocument();
     });
 
@@ -72,33 +78,45 @@ describe("Project pages", () => {
       await renderProjectPage("maconfai");
       const allLinks = screen.getAllByRole("link");
       const repoLink = allLinks.find(
-        (l) => l.getAttribute("href") === "https://github.com/vbarrai/maconfai"
+        (l) =>
+          l.getAttribute("href") === "https://github.com/vbarrai/maconfai"
       );
       expect(repoLink).toBeDefined();
+    });
+
+    it("has a link to the documentation", async () => {
+      await renderProjectPage("maconfai");
+      const allLinks = screen.getAllByRole("link");
+      const docsLink = allLinks.find(
+        (l) => l.getAttribute("href") === "/maconfai/docs"
+      );
+      expect(docsLink).toBeDefined();
     });
   });
 
   describe("parcai", () => {
     it("renders the project name and tagline", async () => {
       await renderProjectPage("parcai");
-      expect(screen.getByText("parcai")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "parcai" })).toBeInTheDocument();
       expect(
-        screen.getByText(/Votre agent AI, en toute sécurité/)
+        screen.getByText(/Isolation shell légère pour agents AI/)
       ).toBeInTheDocument();
     });
 
     it("displays the installation command", async () => {
       await renderProjectPage("parcai");
-      expect(screen.getByText("pip install parcai")).toBeInTheDocument();
+      expect(
+        screen.getByText("cd my-project && parcai")
+      ).toBeInTheDocument();
     });
 
     it("displays features", async () => {
       await renderProjectPage("parcai");
       expect(
-        screen.getByText(/Sandbox complet pour Claude Code/)
+        screen.getByText(/Confinement au répertoire projet sans VM ni Docker/)
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Protection contre l'exfiltration/)
+        screen.getByText(/Protection contre l'accès aux secrets/)
       ).toBeInTheDocument();
     });
 
@@ -115,24 +133,28 @@ describe("Project pages", () => {
   describe("murmurai", () => {
     it("renders the project name and tagline", async () => {
       await renderProjectPage("murmurai");
-      expect(screen.getByText("murmurai")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "murmurai" })).toBeInTheDocument();
       expect(
-        screen.getByText(/Parlez à votre agent, ne tapez plus/)
+        screen.getByText(/Transcription vocale push-to-talk pour macOS/)
       ).toBeInTheDocument();
     });
 
     it("displays the installation command", async () => {
       await renderProjectPage("murmurai");
-      expect(screen.getByText("pip install murmurai")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "git clone https://github.com/vbarrai/murmurai && cd murmurai && pip install -e ."
+        )
+      ).toBeInTheDocument();
     });
 
     it("displays features", async () => {
       await renderProjectPage("murmurai");
       expect(
-        screen.getByText(/Reconnaissance vocale en temps réel/)
+        screen.getByText(/Transcription hors-ligne via faster-whisper/)
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Support multilingue/)
+        screen.getByText(/Modèles Whisper configurables/)
       ).toBeInTheDocument();
     });
 

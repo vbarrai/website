@@ -80,9 +80,9 @@ describe("Homepage", () => {
 
     it("displays project descriptions", () => {
       render(<Home />);
-      expect(screen.getAllByText(/Partagez et distribuez vos configurations/).length).toBeGreaterThan(0);
-      expect(screen.getAllByText(/Isolez votre Claude Code/).length).toBeGreaterThan(0);
-      expect(screen.getAllByText(/whisper pour parler/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Gestionnaire de skills minimal/).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Isolation shell légère/).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Transcription vocale push-to-talk/).length).toBeGreaterThan(0);
     });
   });
 });
