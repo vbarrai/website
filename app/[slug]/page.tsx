@@ -21,24 +21,27 @@ const projects: Record<
 > = {
   maconfai: {
     name: "maconfai",
-    tagline: "Partagez vos configurations AI en un instant",
+    tagline: "Gestionnaire de skills minimal pour Claude Code, Cursor et Codex",
     description:
-      "maconfai vous permet de partager et distribuer vos configurations pour Claude Code, Codex, Cursor et d'autres outils AI. Fini les heures passées à reconfigurer chaque outil — importez une config prête à l'emploi en une seule commande.",
+      "maconfai permet d'installer, mettre à jour et désinstaller des skills d'agents AI depuis des repositories GitHub ou des répertoires locaux. Il découvre les skills via des fichiers SKILL.md et les stocke de manière centralisée avec des symlinks par agent.",
     features: [
-      "Import/export de configurations pour Claude Code, Codex, Cursor et plus",
-      "Registry communautaire de configs prêtes à l'emploi",
-      "Versioning et diff de configurations",
-      "Support multi-outils avec un format unifié",
+      "Installation de skills depuis GitHub ou un répertoire local",
+      "Interface de sélection interactive des skills à installer",
+      "Support multi-agents : Claude Code, Cursor, Codex",
+      "Support de branches et sous-chemins GitHub",
     ],
-    install: "pip install maconfai",
-    usage: `# Exporter votre configuration actuelle
-maconfai export --tool claude-code
+    install: "npx maconfai install owner/repo",
+    usage: `# Installer des skills depuis GitHub
+maconfai install owner/repo
 
-# Importer une configuration partagée
-maconfai import user/my-config
+# Installer sans prompts interactifs
+maconfai install owner/repo -y
 
-# Lister les configurations disponibles
-maconfai search "python dev"`,
+# Spécifier une branche
+maconfai install owner/repo#develop
+
+# Vérifier les mises à jour
+maconfai check`,
     repo: "https://github.com/vbarrai/maconfai",
     color: "border-indigo-500/30",
     accentBg: "bg-indigo-500/10",
@@ -49,24 +52,27 @@ maconfai search "python dev"`,
   },
   parcai: {
     name: "parcai",
-    tagline: "Votre agent AI, en toute sécurité",
+    tagline: "Isolation shell légère pour agents AI",
     description:
-      "parcai isole votre Claude Code dans un environnement sécurisé. Aucune exfiltration de données, aucune destruction de fichiers, aucun accès réseau non autorisé. Travaillez avec votre agent en toute confiance.",
+      "parcai confine un agent AI au répertoire du projet courant. Le système de fichiers est restreint, les secrets sont inaccessibles. Utilise les primitives natives de l'OS (namespaces Linux, sandbox-exec macOS) — pas de VM ni Docker, overhead quasi nul, démarrage instantané.",
     features: [
-      "Sandbox complet pour Claude Code et autres agents AI",
-      "Protection contre l'exfiltration de données sensibles",
-      "Contrôle granulaire des accès fichiers et réseau",
-      "Monitoring en temps réel des actions de l'agent",
+      "Confinement au répertoire projet sans VM ni Docker",
+      "Protection contre l'accès aux secrets et fichiers hors projet",
+      "Réseau activé par défaut (APIs AI), désactivable avec --no-network",
+      "Résumé des changements et confirmation avant application",
     ],
-    install: "pip install parcai",
-    usage: `# Lancer Claude Code dans un environnement isolé
-parcai run claude-code
+    install: "cd my-project && parcai",
+    usage: `# Entrer dans le sandbox
+parcai
 
-# Configurer les permissions
-parcai config --allow-read ./src --deny-network
+# Désactiver le réseau
+parcai --no-network
 
-# Voir les logs d'activité
-parcai logs --follow`,
+# Autoriser des chemins supplémentaires
+parcai --allow /path/to/dir
+
+# Appliquer les changements automatiquement à la sortie
+parcai --apply`,
     repo: "https://github.com/vbarrai/parcai",
     color: "border-cyan-500/30",
     accentBg: "bg-cyan-500/10",
@@ -77,24 +83,25 @@ parcai logs --follow`,
   },
   murmurai: {
     name: "murmurai",
-    tagline: "Parlez à votre agent, ne tapez plus",
+    tagline: "Transcription vocale push-to-talk pour macOS",
     description:
-      "murmurai utilise Whisper pour transformer votre voix en commandes pour votre agent AI. Plus besoin de taper — parlez naturellement et laissez votre agent comprendre vos intentions.",
+      "murmurai utilise faster-whisper pour transcrire votre voix localement sur macOS. Maintenez une touche (Option droite par défaut), parlez, relâchez — le texte est transcrit hors-ligne et collé automatiquement à la position du curseur. Aucune clé API requise.",
     features: [
-      "Reconnaissance vocale en temps réel via Whisper",
-      "Compatible avec Claude Code et d'autres agents CLI",
-      "Support multilingue (français, anglais, et plus)",
-      "Mode dictée continue pour les longues instructions",
+      "Transcription hors-ligne via faster-whisper, sans clé API",
+      "Transcription en streaming pendant que vous parlez",
+      "Collage automatique du texte à la position du curseur",
+      "Modèles Whisper configurables (tiny à large-v3)",
     ],
-    install: "pip install murmurai",
-    usage: `# Démarrer murmurai avec Claude Code
-murmurai start --agent claude-code
+    install: "git clone https://github.com/vbarrai/murmurai && cd murmurai && pip install -e .",
+    usage: `# Activer l'environnement et lancer
+source .venv/bin/activate
+murmurai
 
-# Mode dictée continue
-murmurai listen --continuous
+# Maintenir Option droite pour enregistrer et transcrire
 
-# Choisir la langue
-murmurai start --lang fr`,
+# Installer en tant qu'application standalone
+pip install -e ".[build]"
+make install`,
     repo: "https://github.com/vbarrai/murmurai",
     color: "border-violet-500/30",
     accentBg: "bg-violet-500/10",

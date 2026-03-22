@@ -135,19 +135,19 @@ export default function HeroSection() {
             </div>
             <div className="p-5 text-left text-sm leading-relaxed">
               <p className="text-zinc-500">
-                <span className="text-emerald-400">$</span> npx @vbarrai/cli init my-ai-project
+                <span className="text-emerald-400">$</span> npx maconfai install vbarrai/skills
               </p>
               <p className="text-zinc-600 mt-1">
-                <span className="text-cyan-400">→</span> Scaffolding project...
+                <span className="text-cyan-400">→</span> Fetching skills from GitHub...
               </p>
               <p className="text-zinc-600">
-                <span className="text-cyan-400">→</span> Installing dependencies...
+                <span className="text-cyan-400">→</span> Found 3 skills to install
               </p>
               <p className="text-zinc-600">
-                <span className="text-cyan-400">→</span> Configuring AI pipeline...
+                <span className="text-cyan-400">→</span> Installing to .claude/skills/
               </p>
               <p className="text-emerald-400/80 mt-1">
-                ✓ Project ready. Start building with AI.
+                ✓ Skills installed. Ready to use.
               </p>
             </div>
           </div>
