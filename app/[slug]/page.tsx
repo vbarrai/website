@@ -17,6 +17,7 @@ const projects: Record<
     accentBorder: string;
     gradientFrom: string;
     gradientTo: string;
+    docs?: string;
   }
 > = {
   maconfai: {
@@ -49,6 +50,7 @@ maconfai check`,
     accentBorder: "border-indigo-500/20",
     gradientFrom: "from-indigo-500",
     gradientTo: "to-violet-500",
+    docs: "/maconfai/docs",
   },
   parcai: {
     name: "parcai",
@@ -109,6 +111,7 @@ make install`,
     accentBorder: "border-violet-500/20",
     gradientFrom: "from-violet-500",
     gradientTo: "to-purple-500",
+    docs: "/murmurai/docs",
   },
 };
 
@@ -156,6 +159,19 @@ export default async function ProjectPage({
               vbarrai
             </span>
           </Link>
+          <div className="flex items-center gap-3">
+          {project.docs && (
+            <Link
+              href={project.docs}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-300 hover:bg-white/10 transition-all"
+            >
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+              <span className="hidden sm:inline">Documentation</span>
+              <span className="sm:hidden">Docs</span>
+            </Link>
+          )}
           <a
             href={project.repo}
             target="_blank"
@@ -168,6 +184,7 @@ export default async function ProjectPage({
             <span className="hidden sm:inline">Voir sur GitHub</span>
             <span className="sm:hidden">GitHub</span>
           </a>
+          </div>
         </div>
       </nav>
 
@@ -315,7 +332,18 @@ export default async function ProjectPage({
 
       {/* CTA */}
       <section className="px-6 pb-32">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+          {project.docs && (
+            <Link
+              href={project.docs}
+              className={`inline-flex items-center gap-3 px-6 sm:px-8 py-4 rounded-full border ${project.accentBorder} text-base sm:text-lg font-semibold ${project.accentText} hover:bg-white/5 transition-colors`}
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+              Documentation
+            </Link>
+          )}
           <a
             href={project.repo}
             target="_blank"
