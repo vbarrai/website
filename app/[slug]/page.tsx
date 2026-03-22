@@ -28,8 +28,8 @@ const projects: Record<
     features: [
       "Installation de skills depuis GitHub ou un répertoire local",
       "Interface de sélection interactive des skills à installer",
-      "Support multi-agents : Claude Code, Cursor, Codex",
-      "Support de branches et sous-chemins GitHub",
+      "Support multi-agents : Claude Code, Cursor, Codex, Gemini CLI, Amp Code",
+      "Changez d'agent sans reconfigurer — migrez vos skills, MCP et hooks en une commande",
     ],
     install: "npx maconfai install owner/repo",
     usage: `# Installer des skills depuis GitHub
@@ -76,6 +76,7 @@ parcai --allow /path/to/dir
 # Appliquer les changements automatiquement à la sortie
 parcai --apply`,
     repo: "https://github.com/vbarrai/parcai",
+    docs: "/parcai/docs",
     color: "border-cyan-500/30",
     accentBg: "bg-cyan-500/10",
     accentText: "text-cyan-400",

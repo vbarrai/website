@@ -236,6 +236,140 @@ maconfai install owner/repo --agents=claude-code,cursor`,
       },
     ],
     prev: { slug: "utilisation", label: "Utilisation" },
+    next: { slug: "migration", label: "Migration Cursor → Claude Code" },
+  },
+
+  migration: {
+    title: "Migration Cursor → Claude Code",
+    description:
+      "Guide pas à pas pour migrer votre configuration Cursor vers Claude Code avec maconfai.",
+    content: [
+      {
+        heading: "Pourquoi migrer avec maconfai ?",
+        body: `Cursor et Claude Code utilisent des formats de configuration différents pour les skills, les serveurs MCP et les hooks. Une migration manuelle implique de :
+
+• Copier les fichiers de .cursor/skills/ vers .claude/skills/
+• Traduire la syntaxe des variables d'environnement MCP (\${env:VAR} → \${VAR})
+• Convertir le format des hooks (.cursor/hooks.json → .claude/settings.json)
+
+maconfai automatise tout cela : installez vos skills depuis une source unique et sélectionnez les agents cibles. La traduction des formats est transparente.`,
+      },
+      {
+        heading: "Correspondance des fichiers",
+        body: `Voici comment les fichiers de configuration se correspondent entre les deux agents :
+
+Skills :
+• Cursor : .cursor/skills/<nom>/SKILL.md
+• Claude Code : .claude/skills/<nom>/SKILL.md
+• Canonical : .agents/skills/<nom>/SKILL.md (symlinks vers les deux)
+
+Serveurs MCP :
+• Cursor : .cursor/mcp.json (syntaxe \${env:VAR})
+• Claude Code : .mcp.json (syntaxe \${VAR})
+
+Hooks :
+• Cursor : .cursor/hooks.json (format dédié, version: 1)
+• Claude Code : .claude/settings.json (fusionné dans les settings)
+
+Règles :
+• Cursor : .cursor/rules/*.mdc + AGENTS.md
+• Claude Code : CLAUDE.md + .claude/rules/*.md`,
+      },
+      {
+        heading: "Étape 1 — Centraliser les skills",
+        body: `Si vos skills sont déjà dans un repository GitHub (ou un répertoire local avec des fichiers SKILL.md), lancez maconfai install en ciblant les deux agents :`,
+        code: `npx maconfai install owner/mon-repo-de-skills`,
+      },
+      {
+        heading: "Étape 2 — Sélectionner les skills",
+        body: `maconfai découvre tous les fichiers SKILL.md dans le repository et affiche une interface de sélection interactive. Les skills déjà installées pour Cursor sont pré-cochées :
+
+? Sélectionnez les skills à installer
+  ◉ skill-debug
+  ◉ skill-review
+  ◯ skill-deploy
+
+Cochez les skills que vous souhaitez installer (ou garder) et validez.`,
+      },
+      {
+        heading: "Étape 3 — Sélectionner les serveurs MCP",
+        body: `Si le repository contient des fichiers mcp.json (à la racine ou dans mcps/<nom>/mcp.json), maconfai propose de les installer. La traduction de la syntaxe des variables d'environnement est automatique :`,
+        code: `# Source (format neutre)
+"env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" }
+
+# Installé pour Claude Code (.mcp.json)
+"env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" }
+
+# Installé pour Cursor (.cursor/mcp.json)
+"env": { "GITHUB_TOKEN": "\${env:GITHUB_TOKEN}" }`,
+      },
+      {
+        heading: "Étape 4 — Sélectionner les hooks",
+        body: `Si des hooks sont définis, maconfai propose de les installer. Chaque hook peut définir des configurations spécifiques par agent. Les noms d'événements sont traduits automatiquement :
+
+• Claude Code : PreToolUse, PostToolUse
+• Cursor : preToolUse, beforeShellExecution, afterFileEdit
+
+Le format du fichier cible diffère aussi :
+• Claude Code → fusionné dans .claude/settings.json
+• Cursor → écrit dans .cursor/hooks.json (format dédié avec version: 1)`,
+      },
+      {
+        heading: "Étape 5 — Sélectionner les agents cibles",
+        body: `L'étape clé de la migration : maconfai détecte les agents installés sur votre machine et vous demande lesquels cibler :
+
+? Sélectionnez les agents cibles
+  ◉ claude-code  (détecté)
+  ◉ cursor       (détecté)
+  ◯ codex
+  ◯ gemini-cli
+
+Pour migrer de Cursor vers Claude Code, cochez les deux agents. maconfai installe les skills, MCP et hooks pour chacun avec le format approprié.
+
+Si vous souhaitez ensuite retirer la configuration Cursor, relancez la commande et décochez cursor — maconfai nettoiera les fichiers correspondants.`,
+      },
+      {
+        heading: "Étape 6 — Vérifier l'installation",
+        body: `Après l'installation, vérifiez la structure générée :`,
+        code: `# Skills centralisées avec symlinks
+ls -la .agents/skills/
+ls -la .claude/skills/      # symlinks → .agents/skills/
+ls -la .cursor/skills/      # symlinks → .agents/skills/
+
+# MCP (formats différents)
+cat .mcp.json               # Claude Code (syntaxe \${VAR})
+cat .cursor/mcp.json        # Cursor (syntaxe \${env:VAR})
+
+# Hooks (formats différents)
+cat .claude/settings.json   # Claude Code
+cat .cursor/hooks.json      # Cursor
+
+# Lock file (traçabilité)
+cat ai-lock.json`,
+      },
+      {
+        heading: "Mode non-interactif",
+        body: `Pour automatiser la migration dans un script CI/CD, utilisez les flags de filtrage :`,
+        code: `# Installer tout pour les deux agents sans prompts
+npx maconfai install owner/repo -y --agents=claude-code,cursor
+
+# Installer uniquement certaines skills
+npx maconfai install owner/repo -y \\
+  --agents=claude-code \\
+  --skills=skill-debug,skill-review
+
+# Installer uniquement les MCPs
+npx maconfai install owner/repo -y \\
+  --agents=claude-code \\
+  --mcps=github,filesystem`,
+      },
+      {
+        heading: "Vérifier les mises à jour",
+        body: `Après la migration, utilisez maconfai check pour garder vos configurations synchronisées. Cette commande compare les tree hashes Git et propose la mise à jour si des changements sont détectés en amont :`,
+        code: `npx maconfai check`,
+      },
+    ],
+    prev: { slug: "commandes", label: "Commandes CLI" },
     next: { slug: "agents", label: "Agents supportés" },
   },
 
@@ -318,7 +452,7 @@ Note : maconfai traduit automatiquement la syntaxe des variables d'environnement
 • Configuration spécifique avec des formats propres à la plateforme.`,
       },
     ],
-    prev: { slug: "commandes", label: "Commandes CLI" },
+    prev: { slug: "migration", label: "Migration Cursor → Claude Code" },
     next: { slug: "architecture", label: "Architecture" },
   },
 

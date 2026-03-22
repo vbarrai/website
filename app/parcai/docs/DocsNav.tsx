@@ -9,9 +9,7 @@ const sections = [
   { slug: "concept", label: "Concept" },
   { slug: "installation", label: "Installation" },
   { slug: "utilisation", label: "Utilisation" },
-  { slug: "commandes", label: "Commandes CLI" },
-  { slug: "migration", label: "Migration" },
-  { slug: "agents", label: "Agents supportés" },
+  { slug: "configuration", label: "Configuration" },
   { slug: "architecture", label: "Architecture" },
   { slug: "contribuer", label: "Contribuer" },
 ];
@@ -33,7 +31,7 @@ function NavLink({
       onClick={onClick}
       className={`block px-4 py-2 rounded-lg text-sm transition-all ${
         active
-          ? "bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500"
+          ? "bg-cyan-500/10 text-cyan-400 border-l-2 border-cyan-500"
           : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
       }`}
     >
@@ -46,7 +44,7 @@ export default function DocsNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const currentSlug = pathname.replace("/maconfai/docs", "").replace(/^\//, "");
+  const currentSlug = pathname.replace("/parcai/docs", "").replace(/^\//, "");
   const currentLabel =
     sections.find((s) => s.slug === currentSlug)?.label ?? "Introduction";
 
@@ -63,7 +61,7 @@ export default function DocsNav() {
               <NavLink
                 key={s.slug}
                 href={
-                  s.slug ? `/maconfai/docs/${s.slug}` : "/maconfai/docs"
+                  s.slug ? `/parcai/docs/${s.slug}` : "/parcai/docs"
                 }
                 label={s.label}
                 active={currentSlug === s.slug}
@@ -81,7 +79,7 @@ export default function DocsNav() {
         >
           <span className="flex items-center gap-2">
             <svg
-              className="w-4 h-4 text-indigo-400"
+              className="w-4 h-4 text-cyan-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -115,7 +113,7 @@ export default function DocsNav() {
               <NavLink
                 key={s.slug}
                 href={
-                  s.slug ? `/maconfai/docs/${s.slug}` : "/maconfai/docs"
+                  s.slug ? `/parcai/docs/${s.slug}` : "/parcai/docs"
                 }
                 label={s.label}
                 active={currentSlug === s.slug}
