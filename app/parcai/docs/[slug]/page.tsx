@@ -77,14 +77,16 @@ C'est l'approche la plus légère possible pour isoler un processus tout en cons
 • Un agent AI installé (Claude Code, Cursor, Codex, etc.)`,
       },
       {
-        heading: "Installation via npm",
-        body: "Installez parcai globalement via npm :",
-        code: `npm i -g parcai`,
+        heading: "Installation via Homebrew",
+        body: "Installez parcai via Homebrew :",
+        code: `brew install vbarrai/tap/parcai`,
       },
       {
-        heading: "Utilisation directe avec npx",
-        body: "Vous pouvez aussi utiliser parcai directement via npx sans installation globale :",
-        code: `npx parcai`,
+        heading: "Installation manuelle depuis GitHub",
+        body: "Vous pouvez aussi cloner le dépôt et utiliser le script directement :",
+        code: `git clone https://github.com/vbarrai/parcai.git
+cd parcai
+sudo cp parcai /usr/local/bin/`,
       },
       {
         heading: "Vérifier l'installation",
