@@ -1,57 +1,27 @@
 const projects = [
   {
-    name: "ai-pipeline",
-    description: "End-to-end ML pipeline framework with auto-scaling, model versioning, and A/B testing built in.",
-    tags: ["Python", "Kubernetes", "MLOps"],
-    stars: "2.4k",
+    name: "maconfai",
+    description: "Partagez et distribuez vos configurations Claude Code, Codex, Cursor et autres outils AI en toute simplicité.",
+    tags: ["Config", "CLI", "AI Tools"],
     color: "border-indigo-500/20 hover:border-indigo-500/40",
     accentBg: "bg-indigo-500/10",
     accentText: "text-indigo-400",
   },
   {
-    name: "vector-forge",
-    description: "High-performance vector database client with smart indexing and real-time similarity search.",
-    tags: ["Rust", "WASM", "Search"],
-    stars: "1.8k",
+    name: "parcai",
+    description: "Isolez votre Claude Code pour travailler en toute sécurité : aucune exfiltration de données, aucune destruction de la machine.",
+    tags: ["Security", "Sandbox", "AI Safety"],
     color: "border-cyan-500/20 hover:border-cyan-500/40",
     accentBg: "bg-cyan-500/10",
     accentText: "text-cyan-400",
   },
   {
-    name: "prompt-studio",
-    description: "Visual prompt engineering toolkit with version control, evaluation, and collaborative editing.",
-    tags: ["TypeScript", "React", "LLM"],
-    stars: "3.1k",
+    name: "murmurai",
+    description: "Un whisper pour parler à votre agent AI plutôt que de lui écrire. Interface vocale naturelle pour vos outils AI.",
+    tags: ["Voice", "Whisper", "Agent"],
     color: "border-violet-500/20 hover:border-violet-500/40",
     accentBg: "bg-violet-500/10",
     accentText: "text-violet-400",
-  },
-  {
-    name: "edge-inference",
-    description: "Run large language models on edge devices with quantization and adaptive batching.",
-    tags: ["C++", "ONNX", "Edge"],
-    stars: "956",
-    color: "border-emerald-500/20 hover:border-emerald-500/40",
-    accentBg: "bg-emerald-500/10",
-    accentText: "text-emerald-400",
-  },
-  {
-    name: "data-weaver",
-    description: "Automated data preprocessing and augmentation pipeline for training datasets.",
-    tags: ["Python", "Data", "ETL"],
-    stars: "1.2k",
-    color: "border-orange-500/20 hover:border-orange-500/40",
-    accentBg: "bg-orange-500/10",
-    accentText: "text-orange-400",
-  },
-  {
-    name: "model-guard",
-    description: "Safety and alignment toolkit for LLM deployments with real-time content filtering.",
-    tags: ["Python", "Safety", "API"],
-    stars: "2.7k",
-    color: "border-rose-500/20 hover:border-rose-500/40",
-    accentBg: "bg-rose-500/10",
-    accentText: "text-rose-400",
   },
 ];
 
@@ -65,11 +35,11 @@ export default function ProjectsSection() {
             Open Source
           </p>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-            <span className="glow-text-subtle">Our </span>
-            <span className="glow-text">projects</span>
+            <span className="glow-text-subtle">Nos </span>
+            <span className="glow-text">projets</span>
           </h2>
           <p className="text-zinc-500 max-w-2xl mx-auto text-lg">
-            From inference to deployment, our ecosystem covers the full AI lifecycle.
+            Des outils open source pour configurer, sécuriser et interagir avec vos agents AI.
           </p>
         </div>
 
@@ -78,9 +48,7 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <a
               key={project.name}
-              href={`https://github.com/vbarrai/${project.name}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/${project.name}`}
               className={`glass-card rounded-2xl p-6 border ${project.color} group cursor-pointer`}
             >
               {/* Header row */}
@@ -96,13 +64,10 @@ export default function ProjectsSection() {
                   </h3>
                 </div>
 
-                {/* Stars */}
-                <div className="flex items-center gap-1 text-xs text-zinc-500">
-                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  {project.stars}
-                </div>
+                {/* GitHub icon */}
+                <svg className="w-5 h-5 text-zinc-600 group-hover:text-zinc-400 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
               </div>
 
               <p className="text-sm text-zinc-500 leading-relaxed mb-5">
