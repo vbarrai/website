@@ -64,6 +64,29 @@ Cela signifie qu'un seul fichier physique alimente tous vos agents. Mettre à jo
 
 Ces trois types de configuration (skills, MCP, hooks) sont traités uniformément par le système d'installation.`,
       },
+      {
+        heading: "Le fichier de verrouillage",
+        body: `maconfai maintient un fichier ai-lock.json à la racine du projet. Ce fichier de verrouillage enregistre :
+
+• Les skills, serveurs MCP et hooks installés
+• L'URL source de chaque configuration
+• Le hash Git (tree SHA) pour détecter les changements
+• L'horodatage de l'installation
+
+Ce fichier permet à la commande maconfai check de comparer les versions installées avec celles disponibles en amont et de proposer les mises à jour nécessaires.`,
+        code: `// Exemple simplifié de ai-lock.json
+{
+  "skills": {
+    "ma-skill": {
+      "source": "vbarrai/skills",
+      "treeHash": "abc123...",
+      "installedAt": "2026-03-19T10:00:00Z"
+    }
+  },
+  "mcps": { ... },
+  "hooks": { ... }
+}`,
+      },
     ],
     prev: { slug: "", label: "Introduction" },
     next: { slug: "installation", label: "Installation" },
@@ -164,7 +187,7 @@ maconfai install /chemin/absolu/vers/skills`,
     content: [
       {
         heading: "maconfai install <source>",
-        body: `Installe des skills depuis une source GitHub ou locale.
+        body: `Installe des skills, serveurs MCP et hooks depuis une source GitHub ou locale.
 
 Arguments :
 • owner/repo — Repository GitHub (ex: vbarrai/skills)
@@ -174,12 +197,17 @@ Arguments :
 
 Options :
 • -y, --yes — Mode non-interactif, installe tout sans confirmation
-• --branch=<branche> — Spécifie la branche à utiliser`,
+• --branch=<branche> — Spécifie la branche à utiliser
+• --agents=agent1,agent2 — Filtre les agents (ex: claude-code,cursor)
+• --skills=skill1,skill2 — Filtre les skills à installer
+• --mcps=mcp1,mcp2 — Filtre les serveurs MCP à installer
+• --hooks=hook1,hook2 — Filtre les hooks à installer`,
         code: `# Exemples
 maconfai install vbarrai/skills
 maconfai install vbarrai/skills#develop
 maconfai install vbarrai/skills -y
-maconfai install ./local/path`,
+maconfai install ./local/path
+maconfai install owner/repo --agents=claude-code,cursor`,
       },
       {
         heading: "maconfai install (sans argument)",
@@ -228,25 +256,29 @@ maconfai install ./local/path`,
         body: `Claude Code est l'agent le plus complet. maconfai gère pour lui :
 
 • Skills — Fichiers SKILL.md installés dans .claude/skills/
-• Serveurs MCP — Configuration fusionnée dans les settings de Claude Code
-• Hooks — Gestionnaires d'événements via hooks.json
+• Serveurs MCP — Configuration fusionnée dans .mcp.json (syntaxe \${VAR} "bare")
+• Hooks — Gestionnaires d'événements via .claude/settings.json
 
 Le fichier d'instructions principal est .claude/CLAUDE.md.`,
         code: `.claude/
+├── settings.json        # hooks config
 └── skills/
     ├── ma-skill/ → ../../.agents/skills/ma-skill/
-    └── autre-skill/ → ../../.agents/skills/autre-skill/`,
+    └── autre-skill/ → ../../.agents/skills/autre-skill/
+.mcp.json                # MCP servers config`,
       },
       {
         heading: "Cursor",
         body: `Cursor bénéficie du même niveau de support que Claude Code :
 
 • Skills — Installées dans .cursor/skills/
-• Serveurs MCP — Intégrés dans la configuration Cursor
-• Hooks — Support des gestionnaires d'événements
+• Serveurs MCP — Fusionnés dans .cursor/mcp.json (syntaxe \${env:VAR} "env-prefix")
+• Hooks — Gestionnaires d'événements via .cursor/hooks.json
 
-Le fichier d'instructions est .cursor/rules/.cursorrules.`,
+Note : maconfai traduit automatiquement la syntaxe des variables d'environnement entre agents. Les configs MCP utilisant \${VAR} pour Claude Code sont converties en \${env:VAR} pour Cursor.`,
         code: `.cursor/
+├── mcp.json             # MCP servers config
+├── hooks.json           # hooks config
 └── skills/
     ├── ma-skill/ → ../../.agents/skills/ma-skill/
     └── autre-skill/ → ../../.agents/skills/autre-skill/`,
@@ -303,20 +335,25 @@ Le fichier d'instructions est .cursor/rules/.cursorrules.`,
         heading: "Structure du projet",
         body: "Le projet suit une structure claire et modulaire :",
         code: `maconfai/
-├── src/             # Code source TypeScript
-├── tests/           # Tests unitaires et d'intégration
-├── bin/
-│   └── cli.mjs      # Point d'entrée CLI
-├── docs/
-│   └── agents-config/  # Documentation des configurations agents
-├── examples/        # Exemples d'utilisation
-├── __mocks__/       # Mocks pour les tests
-├── .claude/skills/  # Skills du projet lui-même
-├── build.config.mjs # Configuration de build
-├── tsconfig.json    # Configuration TypeScript
-├── vitest.config.ts # Configuration des tests
-├── knip.json        # Détection de code inutilisé
-└── package.json     # Métadonnées et scripts`,
+├── src/
+│   ├── cli.ts           # Point d'entrée CLI, parsing d'arguments
+│   ├── install.ts       # Logique d'install/uninstall interactive
+│   ├── installer.ts     # Copie, symlinks, opérations bas niveau
+│   ├── skills.ts        # Découverte SKILL.md, mcp.json, hooks.json
+│   ├── agents.ts        # Définition et détection des agents
+│   ├── types.ts         # Types partagés (AgentType, Skill, etc.)
+│   ├── git.ts           # Helpers Git (clone, fetch, token)
+│   ├── source-parser.ts # Parse les sources (GitHub, local)
+│   ├── lock.ts          # Gestion du lock file (ai-lock.json)
+│   ├── check.ts         # Détection des mises à jour (tree hash)
+│   ├── mcp.ts           # Install/uninstall serveurs MCP
+│   └── hooks.ts         # Install/uninstall hooks
+├── tests/               # Tests organisés par feature
+├── bin/cli.mjs           # Exécutable CLI
+├── build.config.mjs     # Config obuild
+├── tsconfig.json
+├── vitest.config.ts
+└── package.json`,
       },
       {
         heading: "Stockage des skills",
