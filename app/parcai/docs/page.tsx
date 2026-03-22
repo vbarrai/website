@@ -82,8 +82,8 @@ export default function DocsIntroPage() {
           </pre>
         </div>
         <p className="text-sm text-zinc-500 mt-3">
-          L&apos;agent AI est immédiatement confiné au répertoire du projet.
-          Aucune configuration requise.
+          Un clone copy-on-write du projet est créé instantanément.
+          L&apos;agent travaille sur la copie, jamais sur l&apos;original.
         </p>
       </section>
 
@@ -95,7 +95,7 @@ export default function DocsIntroPage() {
             {
               icon: "🔒",
               title: "Isolation native",
-              desc: "Utilise les namespaces Linux ou sandbox-exec macOS, sans VM ni Docker.",
+              desc: "Clone APFS + sandbox-exec sur macOS, overlayfs + unshare sur Linux.",
             },
             {
               icon: "⚡",
