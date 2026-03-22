@@ -48,9 +48,7 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <a
               key={project.name}
-              href={`https://github.com/vbarrai/${project.name}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/projects/${project.name}`}
               className={`glass-card rounded-2xl p-6 border ${project.color} group cursor-pointer`}
             >
               {/* Header row */}
