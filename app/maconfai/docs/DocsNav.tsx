@@ -10,6 +10,7 @@ const sections = [
   { slug: "installation", label: "Installation" },
   { slug: "utilisation", label: "Utilisation" },
   { slug: "commandes", label: "Commandes CLI" },
+  { slug: "migration", label: "Migration" },
   { slug: "agents", label: "Agents supportés" },
   { slug: "architecture", label: "Architecture" },
   { slug: "contribuer", label: "Contribuer" },

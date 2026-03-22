@@ -29,14 +29,14 @@ const quickLinks = [
     href: "/maconfai/docs/commandes",
   },
   {
+    title: "Migration",
+    description: "Migrer de Cursor vers Claude Code",
+    href: "/maconfai/docs/migration",
+  },
+  {
     title: "Agents supportés",
     description: "Claude Code, Cursor, Codex et plus",
     href: "/maconfai/docs/agents",
-  },
-  {
-    title: "Architecture",
-    description: "Structure interne et organisation des fichiers",
-    href: "/maconfai/docs/architecture",
   },
 ];
 
@@ -114,9 +114,9 @@ export default function DocsIntroPage() {
               desc: "Support natif de Claude Code, Cursor, Codex, Gemini CLI et Amp Code.",
             },
             {
-              icon: "📦",
-              title: "Flexible",
-              desc: "Installe depuis GitHub, des branches spécifiques ou des répertoires locaux.",
+              icon: "🔄",
+              title: "Sans vendor lock-in",
+              desc: "Changez d'agent librement — migrez skills, MCP et hooks en une commande.",
             },
           ].map((item) => (
             <div
