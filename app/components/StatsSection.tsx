@@ -42,7 +42,7 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
   }, [target]);
 
   return (
-    <div ref={ref} className="text-4xl sm:text-5xl font-bold glow-text tabular-nums">
+    <div ref={ref} className="text-3xl sm:text-5xl font-bold glow-text tabular-nums">
       {Number.isInteger(target) ? Math.floor(count) : count.toFixed(1)}
       {suffix}
     </div>
@@ -53,8 +53,8 @@ export default function StatsSection() {
   return (
     <section className="relative py-24 px-6">
       <div className="max-w-5xl mx-auto">
-        <div className="glass-card rounded-3xl p-10 sm:p-16">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+        <div className="glass-card rounded-3xl p-6 sm:p-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 text-center">
             {stats.map((stat) => (
               <div key={stat.label}>
                 <AnimatedCounter target={stat.value} suffix={stat.suffix} />

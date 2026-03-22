@@ -74,7 +74,7 @@ export default function HeroSection() {
         </div>
 
         {/* Main heading */}
-        <h1 className="fade-up fade-up-delay-1 text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6">
+        <h1 className="fade-up fade-up-delay-1 text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6">
           <span className="glow-text-subtle">We build</span>
           <br />
           <span className="glow-text">AI tools</span>
@@ -133,7 +133,7 @@ export default function HeroSection() {
               <div className="w-3 h-3 rounded-full bg-green-500/60" />
               <span className="ml-2 text-xs text-zinc-600 font-mono">terminal</span>
             </div>
-            <div className="p-5 text-left text-sm leading-relaxed">
+            <div className="p-5 text-left text-sm leading-relaxed overflow-x-auto">
               <p className="text-zinc-500">
                 <span className="text-emerald-400">$</span> npx maconfai install vbarrai/skills
               </p>
