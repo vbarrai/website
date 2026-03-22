@@ -144,7 +144,7 @@ export default function HeroSection() {
                 <span className="text-cyan-400">→</span> Found 3 skills to install
               </p>
               <p className="text-zinc-600">
-                <span className="text-cyan-400">→</span> Installing to .claude/skills/
+                <span className="text-cyan-400">→</span> Installing to .agents/skills/
               </p>
               <p className="text-emerald-400/80 mt-1">
                 ✓ Skills installed. Ready to use.

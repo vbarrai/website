@@ -2,12 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const stats = [
-  { value: 12, suffix: "k+", label: "GitHub Stars" },
-  { value: 340, suffix: "+", label: "Contributors" },
-  { value: 2.8, suffix: "M", label: "Downloads/month" },
-  { value: 50, suffix: "+", label: "Open Source Tools" },
-];
+interface Stat {
+  value: number;
+  suffix: string;
+  label: string;
+}
 
 function AnimatedCounter({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0);
@@ -49,7 +48,7 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
   );
 }
 
-export default function StatsSection() {
+export default function StatsSection({ stats }: { stats: Stat[] }) {
   return (
     <section className="relative py-24 px-6">
       <div className="max-w-5xl mx-auto">
