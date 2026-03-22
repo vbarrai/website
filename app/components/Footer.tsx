@@ -23,7 +23,7 @@ export default function Footer() {
           {[
             {
               title: "Projects",
-              links: ["ai-pipeline", "vector-forge", "prompt-studio", "edge-inference"],
+              links: ["maconfai", "parcai", "murmurai"],
             },
             {
               title: "Community",
