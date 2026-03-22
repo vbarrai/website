@@ -59,7 +59,7 @@ export default function DocsLayout({
       </nav>
 
       {/* Content area */}
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 flex gap-10">
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 flex flex-col lg:flex-row gap-10">
         <DocsNav />
         <main className="flex-1 min-w-0">{children}</main>
       </div>
