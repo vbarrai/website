@@ -76,6 +76,7 @@ parcai --allow /path/to/dir
 # Appliquer les changements automatiquement à la sortie
 parcai --apply`,
     repo: "https://github.com/vbarrai/parcai",
+    docs: "/parcai/docs",
     color: "border-cyan-500/30",
     accentBg: "bg-cyan-500/10",
     accentText: "text-cyan-400",
