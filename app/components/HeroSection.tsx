@@ -64,16 +64,7 @@ export default function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        {/* Badge */}
-        <div className="fade-up inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8 text-sm text-zinc-400">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-          </span>
-          Open Source AI Tooling
-        </div>
-
-        {/* Main heading */}
+{/* Main heading */}
         <h1 className="fade-up fade-up-delay-1 text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6">
           <span className="glow-text-subtle">We build</span>
           <br />
