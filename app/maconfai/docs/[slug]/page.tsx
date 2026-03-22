@@ -7,7 +7,12 @@ import type { Metadata } from "next";
 interface DocSection {
   title: string;
   description: string;
-  content: { heading: string; body: string; code?: string }[];
+  content: {
+    heading: string;
+    body: string;
+    code?: string;
+    table?: { headers: string[]; rows: string[][] };
+  }[];
   prev?: { slug: string; label: string };
   next?: { slug: string; label: string };
 }
@@ -241,15 +246,17 @@ maconfai install owner/repo --agents=claude-code,cursor`,
     content: [
       {
         heading: "Vue d'ensemble",
-        body: `maconfai supporte actuellement cinq agents AI. Le niveau de support varie selon les capacités de chaque agent :
-
-| Agent        | Skills | MCP Servers | Hooks |
-|-------------|--------|-------------|-------|
-| Claude Code | ✅     | ✅          | ✅    |
-| Cursor      | ✅     | ✅          | ✅    |
-| Codex       | ✅     | ❌          | ❌    |
-| Gemini CLI  | ✅     | ❌          | ❌    |
-| Amp Code    | ✅     | ❌          | ❌    |`,
+        body: `maconfai supporte actuellement cinq agents AI. Le niveau de support varie selon les capacités de chaque agent :`,
+        table: {
+          headers: ["Agent", "Skills", "MCP Servers", "Hooks"],
+          rows: [
+            ["Claude Code", "✅", "✅", "✅"],
+            ["Cursor", "✅", "✅", "✅"],
+            ["Codex", "✅", "❌", "❌"],
+            ["Gemini CLI", "✅", "❌", "❌"],
+            ["Amp Code", "✅", "❌", "❌"],
+          ],
+        },
       },
       {
         heading: "Claude Code",
@@ -533,6 +540,41 @@ export default async function DocPage({
             <div className="text-zinc-400 leading-relaxed whitespace-pre-line mb-4">
               {section.body}
             </div>
+            {section.table && (
+              <div className="overflow-x-auto mb-4">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      {section.table.headers.map((h, hi) => (
+                        <th
+                          key={hi}
+                          className="text-left py-3 px-4 text-zinc-200 font-semibold"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {section.table.rows.map((row, ri) => (
+                      <tr
+                        key={ri}
+                        className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                      >
+                        {row.map((cell, ci) => (
+                          <td
+                            key={ci}
+                            className={`py-3 px-4 ${ci === 0 ? "text-zinc-200 font-medium" : "text-zinc-400"}`}
+                          >
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {section.code && (
               <div className="glass-card rounded-xl border border-indigo-500/20 p-5">
                 <div className="flex items-center gap-2 mb-3">
