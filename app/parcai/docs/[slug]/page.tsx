@@ -26,21 +26,21 @@ Même avec des garde-fous dans le prompt, un agent peut accidentellement (ou via
       },
       {
         heading: "La solution parcai",
-        body: `parcai résout ce problème en créant un sandbox léger autour de l'agent AI. L'agent travaille sur une copie isolée du projet — jamais sur l'original :
+        body: `parcai résout ce problème en créant un sandbox léger autour de l'agent AI sur macOS. L'agent travaille sur une copie isolée du projet — jamais sur l'original :
 
-1. Copie copy-on-write — Sur macOS, parcai crée un clone APFS (cp -c) du répertoire projet : copie instantanée à coût zéro. Sur Linux, un overlayfs monte le projet en lecture seule avec une couche d'écriture tmpfs.
+1. Clone APFS copy-on-write — parcai crée un clone APFS (cp -c) du répertoire projet : copie instantanée à coût zéro. Toutes les modifications de l'agent sont écrites dans le clone, l'original reste intact.
 
-2. Primitives OS natives — parcai utilise sandbox-exec sur macOS et unshare (namespaces) sur Linux. Pas de VM, pas de Docker, pas de couche de virtualisation. L'overhead est quasi nul.
+2. sandbox-exec natif macOS — parcai utilise sandbox-exec avec un profil généré dynamiquement. Pas de VM, pas de Docker, pas de couche de virtualisation. L'overhead est quasi nul.
 
-3. Secrets inaccessibles — Les répertoires sensibles (~/.ssh, ~/.aws, ~/.gnupg, ~/.kube, ~/.docker, etc.) sont explicitement bloqués. Sur Linux, le filesystem hôte est complètement détaché via pivot_root.
+3. Secret masking via proxy MITM — Un proxy MITM local intercepte les requêtes réseau. Les vrais tokens et credentials sont remplacés par des faux dans le sandbox ; le proxy les échange contre les vrais au moment de l'appel API.
 
-4. Réseau contrôlé — Le réseau reste activé par défaut (nécessaire pour les APIs AI), mais peut être désactivé avec --no-network pour un confinement total.`,
+4. Réseau contrôlé avec filtrage par domaine — Le réseau reste activé par défaut avec support d'allowlist et blocklist par domaine. Il peut être désactivé complètement avec --no-network.`,
       },
       {
         heading: "Workflow sécurisé",
         body: `parcai suit un workflow en trois phases :
 
-1. Clonage — parcai crée une copie copy-on-write du répertoire projet (clone APFS sur macOS, overlayfs sur Linux) et lance un shell confiné dans cette copie.
+1. Clonage — parcai crée un clone APFS copy-on-write du répertoire projet et lance un shell confiné dans cette copie.
 
 2. Résumé — À la sortie du sandbox, parcai compare la copie avec l'original via rsync --dry-run et affiche un résumé des modifications (fichiers ajoutés, modifiés, supprimés).
 
@@ -53,7 +53,7 @@ Même avec des garde-fous dans le prompt, un agent peut accidentellement (ou via
 • Ne nécessite aucune installation supplémentaire (pas de daemon, pas d'image)
 • Démarre instantanément (pas de boot, pas de pull d'image)
 • N'a pas d'overhead de performance mesurable
-• Utilise directement les primitives de sécurité du noyau OS
+• Utilise directement les primitives de sécurité natives de macOS
 • Partage le même environnement (même shell, mêmes outils installés)
 • Protège l'original — même un rm -rf . ne détruit que la copie
 
@@ -70,16 +70,11 @@ C'est l'approche la plus légère possible pour isoler un processus tout en cons
     content: [
       {
         heading: "Prérequis",
-        body: `parcai fonctionne sur Linux et macOS. Vous avez besoin de :
+        body: `parcai fonctionne exclusivement sur macOS. Vous avez besoin de :
 
-• Linux avec support des namespaces utilisateur (kernel 3.8+, la plupart des distributions modernes)
-• Ou macOS avec sandbox-exec (inclus nativement)
+• macOS 10.13+ (High Sierra ou supérieur) avec un volume APFS
+• sandbox-exec (inclus nativement dans macOS)
 • Un agent AI installé (Claude Code, Cursor, Codex, etc.)`,
-      },
-      {
-        heading: "Installation via Homebrew",
-        body: "Installez parcai via Homebrew :",
-        code: `brew install vbarrai/tap/parcai`,
       },
       {
         heading: "Installation manuelle depuis GitHub",
@@ -95,9 +90,7 @@ sudo cp parcai /usr/local/bin/`,
       },
       {
         heading: "Permissions",
-        body: `Sur Linux, parcai utilise les namespaces utilisateur (user namespaces) qui ne nécessitent pas de privilèges root. La plupart des distributions modernes les activent par défaut.
-
-Sur macOS, parcai utilise sandbox-exec qui est inclus nativement dans le système. Aucune permission supplémentaire n'est requise.`,
+        body: `parcai utilise sandbox-exec qui est inclus nativement dans macOS. Aucune permission supplémentaire n'est requise et aucun accès root n'est nécessaire pour le fonctionnement du sandbox.`,
       },
     ],
     prev: { slug: "concept", label: "Concept" },
@@ -138,8 +131,14 @@ parcai --discard`,
       },
       {
         heading: "Désactiver le réseau",
-        body: `Pour un confinement total, désactivez l'accès réseau avec --no-network. Sur Linux, cela crée un namespace réseau isolé (seul loopback). Sur macOS, le profil sandbox bloque tout accès réseau :`,
+        body: `Pour un confinement total, désactivez l'accès réseau avec --no-network. Le profil sandbox passe de (allow network*) à (deny network*) :`,
         code: `parcai --no-network`,
+      },
+      {
+        heading: "Masquage des secrets",
+        body: `parcai peut masquer automatiquement vos secrets (tokens API, credentials) dans le sandbox via un proxy MITM local. Les vrais tokens sont remplacés par des faux à l'intérieur du sandbox ; le proxy intercepte les requêtes sortantes et échange les faux tokens contre les vrais avant de contacter l'API :`,
+        code: `# Activer le masquage des secrets
+parcai --secrets`,
       },
       {
         heading: "Autoriser des chemins supplémentaires",
@@ -183,6 +182,7 @@ fi`,
 • --allow <chemin> — Autorise l'accès en lecture seule à un chemin (répétable)
 • --rw <chemin> — Autorise l'accès en lecture/écriture à un chemin (répétable)
 • --no-network — Désactive l'accès réseau dans le sandbox
+• --secrets — Active le masquage des secrets via proxy MITM local
 • --apply — Applique automatiquement les changements à la sortie
 • --discard — Rejette automatiquement les changements à la sortie
 • --dry-run — Affiche le profil de sandbox et le chemin du clone sans lancer le shell
@@ -196,12 +196,9 @@ Note : --apply et --discard sont mutuellement exclusifs.`,
         heading: "Réseau",
         body: `Par défaut, le réseau est activé dans le sandbox. C'est nécessaire pour que les agents AI puissent communiquer avec leurs APIs (Anthropic, OpenAI, etc.).
 
-Pour que DNS et TLS fonctionnent dans le sandbox, parcai autorise la lecture de :
-• /etc/resolv.conf, /etc/nsswitch.conf, /etc/hosts (résolution DNS)
-• /etc/ssl/certs/, /etc/pki/tls/certs/ (certificats TLS)
-• /usr/share/ca-certificates/, /usr/lib/ssl/ (autorités de certification)
+parcai supporte le filtrage par domaine via allowlist et blocklist. Configurez les domaines autorisés ou bloqués dans le fichier .parcai.json du projet.
 
-Avec --no-network, sur Linux un namespace réseau isolé est créé (seul loopback disponible). Sur macOS, le profil sandbox passe de (allow network*) à (deny network*).`,
+Avec --no-network, le profil sandbox passe de (allow network*) à (deny network*), bloquant tout accès réseau.`,
         code: `parcai --no-network`,
       },
       {
@@ -236,19 +233,53 @@ parcai --allow /data --rw /tmp/cache`,
 • ~/.netrc — Credentials réseau
 • ~/.npmrc — Credentials npm
 
-Sur macOS, tout le répertoire /Users est bloqué par défaut, puis seul le clone du projet est autorisé en écriture. Sur Linux, le filesystem hôte est complètement détaché via pivot_root — seuls les bind-mounts explicites sont accessibles.`,
+Tout le répertoire /Users est bloqué par défaut, puis seul le clone du projet est autorisé en écriture. Avec --secrets, un proxy MITM local remplace en plus les vrais tokens par des faux dans le sandbox.`,
       },
       {
         heading: "Variables d'environnement dans le sandbox",
         body: `parcai définit plusieurs variables d'environnement à l'intérieur du sandbox :
 
 • PARCAI=1 — Indique que le shell tourne dans un sandbox parcai
-• PARCAI_BACKEND=sandbox-exec ou unshare — Backend d'isolation utilisé
+• PARCAI_BACKEND=sandbox-exec — Backend d'isolation utilisé
 • PARCAI_HOST_CWD=<chemin> — Chemin original du projet sur l'hôte
 • HOME=<home> — Préservé pour l'accès aux outils CLI
 • ZDOTDIR=<clone> — Pointe vers le clone pour les fichiers de config shell
 • PS1=[parcai] %1~ %# — Prompt modifié pour indiquer le sandbox
 • PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin — Restreint aux binaires système`,
+      },
+      {
+        heading: "Filtrage réseau par domaine",
+        body: `parcai permet de contrôler finement les domaines accessibles depuis le sandbox via une allowlist (seuls ces domaines sont autorisés) ou une blocklist (ces domaines sont bloqués). La configuration se fait dans le fichier .parcai.json à la racine du projet :`,
+        code: `{
+  "network": {
+    "allowlist": ["api.anthropic.com", "api.openai.com"],
+    "blocklist": ["evil.example.com"]
+  }
+}`,
+      },
+      {
+        heading: ".parcai.json",
+        body: `Le fichier .parcai.json à la racine du projet permet de définir une configuration par projet. Il est lu automatiquement au lancement de parcai. Options disponibles :
+
+• network.allowlist — Liste de domaines autorisés (si défini, seuls ces domaines sont accessibles)
+• network.blocklist — Liste de domaines bloqués
+• secrets — Activer le masquage des secrets par défaut (booléen)
+• allow — Liste de chemins supplémentaires en lecture seule
+• rw — Liste de chemins supplémentaires en lecture/écriture`,
+        code: `{
+  "secrets": true,
+  "allow": ["/data/shared"],
+  "rw": ["/tmp/workspace"],
+  "network": {
+    "allowlist": ["api.anthropic.com"]
+  }
+}`,
+      },
+      {
+        heading: "Persistance de session",
+        body: `parcai persiste l'état des sessions entre les exécutions. Les données de session sont stockées dans ~/.parcai/sessions/<hash>/, où <hash> est un identifiant unique dérivé du chemin du projet.
+
+Cela permet de reprendre là où vous en étiez sans reconfigurer le sandbox à chaque lancement. Les fichiers temporaires, l'historique du shell et l'état du clone sont préservés entre les sessions.`,
       },
     ],
     prev: { slug: "utilisation", label: "Utilisation" },
@@ -265,31 +296,13 @@ Sur macOS, tout le répertoire /Users est bloqué par défaut, puis seul le clon
 
 • Bash — Script principal (parcai)
 • sandbox-exec — Isolation sur macOS (profil .sb template)
-• unshare + overlayfs + pivot_root — Isolation sur Linux
+• mitmproxy — Proxy MITM local pour le masquage des secrets
 • rsync — Détection et application des changements
 • cp -c (APFS clone) — Copie copy-on-write sur macOS`,
       },
       {
-        heading: "Isolation sur Linux",
-        body: `Sur Linux, parcai utilise unshare avec quatre namespaces :
-
-1. Mount namespace (--mount) — Le système de fichiers est remonté avec overlayfs. Le projet original est la couche inférieure (lecture seule), une couche tmpfs absorbe toutes les écritures. pivot_root détache ensuite complètement le filesystem hôte — il devient inaccessible.
-
-2. PID namespace (--pid --fork) — Les processus dans le sandbox ne voient pas les processus de l'hôte. Le sandbox a son propre PID 1.
-
-3. User namespace (--map-root-user) — Le processus est mappé comme root dans le namespace sans avoir de privilèges réels. Aucun accès root sur l'hôte.
-
-4. Network namespace (--net, optionnel) — Avec --no-network, un namespace réseau isolé est créé. Seul loopback est disponible.
-
-Les fichiers DNS/TLS (/etc/resolv.conf, /etc/ssl/certs/) sont bind-mountés en lecture seule pour que le réseau fonctionne.`,
-        code: `# Flags unshare utilisés
-UNSHARE_FLAGS="--mount --pid --fork --map-root-user"
-# Ajout conditionnel si --no-network
-UNSHARE_FLAGS+=" --net"`,
-      },
-      {
         heading: "Isolation sur macOS",
-        body: `Sur macOS, parcai utilise deux mécanismes complémentaires :
+        body: `parcai utilise trois mécanismes complémentaires sur macOS :
 
 1. Clone APFS (cp -c -R) — Le répertoire projet est cloné via copy-on-write au niveau du filesystem. La copie est instantanée et ne consomme aucun espace disque tant que les fichiers ne sont pas modifiés. Si l'agent exécute rm -rf ., seul le clone est détruit.
 
@@ -300,7 +313,9 @@ UNSHARE_FLAGS+=" --net"`,
 • Exécution restreinte aux binaires système (/usr/bin, /bin, /opt/homebrew/bin)
 • Visibilité des processus bloquée (deny process-info*) — ps aux ne montre rien de l'hôte
 • Signaux restreints à ses propres processus (allow signal (target self))
-• Politique réseau substituée dynamiquement (allow/deny network*)`,
+• Politique réseau substituée dynamiquement (allow/deny network*)
+
+3. Proxy MITM pour secret masking — Avec --secrets, un proxy mitmproxy local est lancé. Les vrais credentials (tokens API, clés) sont remplacés par des faux dans l'environnement du sandbox. Le proxy intercepte les requêtes sortantes et échange les faux tokens contre les vrais avant de contacter le service distant. Cela empêche l'agent d'exfiltrer des credentials réels.`,
         code: `# Extrait du profil sandbox macOS
 (deny file-read* file-write* (subpath "/Users"))
 (allow file-read* file-write* (subpath "{{CLONE}}"))
@@ -315,9 +330,9 @@ UNSHARE_FLAGS+=" --net"`,
         heading: "Gestion des changements",
         body: `Les modifications sont détectées et appliquées via rsync :
 
-1. L'agent travaille sur le clone (macOS) ou l'overlay tmpfs (Linux) — jamais sur l'original.
+1. L'agent travaille sur le clone APFS — jamais sur l'original.
 
-2. À la sortie du shell, rsync --dry-run compare le clone/overlay avec le projet original et produit un résumé avec le statut de chaque fichier :
+2. À la sortie du shell, rsync --dry-run compare le clone avec le projet original et produit un résumé avec le statut de chaque fichier :
 • A (added) — Fichier créé
 • M (modified) — Fichier modifié
 • D (deleted) — Fichier supprimé

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Introduction — murmurai docs",
   description:
-    "murmurai — transcription vocale push-to-talk hors-ligne pour macOS.",
+    "murmurai — transcription vocale push-to-talk et assistant AI pour macOS.",
 };
 
 const quickLinks = [
@@ -54,13 +54,15 @@ export default function DocsIntroPage() {
           </h1>
         </div>
         <p className="text-lg text-violet-400 font-medium mb-4">
-          Transcription vocale push-to-talk pour macOS
+          Transcription vocale push-to-talk et assistant AI pour macOS
         </p>
         <p className="text-zinc-400 leading-relaxed max-w-2xl">
           murmurai utilise faster-whisper pour transcrire votre voix localement
-          sur macOS. Maintenez une touche, parlez, relâchez — le texte est
-          transcrit hors-ligne et collé automatiquement à la position du
-          curseur. Aucune clé API requise.
+          sur macOS. Mode Transcript : maintenez une touche, parlez, relâchez
+          — le texte est collé au curseur. Mode Agent : envoyez votre voix +
+          texte sélectionné à un modèle Ollama local pour un traitement AI.
+          Fusion bilingue FR/EN avec dictionnaire de jargon technique. 100%
+          hors-ligne, aucune clé API requise.
         </p>
       </div>
 
@@ -77,6 +79,11 @@ export default function DocsIntroPage() {
             </span>
           </div>
           <pre className="font-mono text-sm overflow-x-auto text-violet-400">
+            <span className="text-zinc-600"># Installation via DMG (recommandée)</span>{"\n"}
+            <span className="text-zinc-500">$ </span>open https://github.com/vbarrai/murmurai/releases{"\n"}
+            <span className="text-zinc-600"># Télécharger murmurai.dmg, glisser dans /Applications</span>{"\n"}
+            {"\n"}
+            <span className="text-zinc-600"># Ou installation développeur</span>{"\n"}
             <span className="text-zinc-500">$ </span>git clone
             https://github.com/vbarrai/murmurai{"\n"}
             <span className="text-zinc-500">$ </span>cd murmurai{"\n"}
@@ -87,7 +94,7 @@ export default function DocsIntroPage() {
           </pre>
         </div>
         <p className="text-sm text-zinc-500 mt-3">
-          Le modèle Whisper (~500 Mo pour "small") se télécharge automatiquement
+          Le modèle Whisper (~500 Mo pour &quot;small&quot;) se télécharge automatiquement
           au premier lancement.
         </p>
       </section>
@@ -103,19 +110,19 @@ export default function DocsIntroPage() {
               desc: "Maintenez Option droite, parlez, relâchez pour transcrire.",
             },
             {
-              icon: "🔒",
-              title: "100% hors-ligne",
-              desc: "Aucune clé API, aucune donnée envoyée — tout reste sur votre Mac.",
+              icon: "🤖",
+              title: "Mode Agent",
+              desc: "Envoyez voix + texte sélectionné à un modèle Ollama local.",
             },
             {
-              icon: "⚡",
-              title: "Streaming temps réel",
-              desc: "Transcription en streaming pendant que vous parlez.",
+              icon: "🌐",
+              title: "Bilingue FR/EN",
+              desc: "Fusion locale avec dictionnaire de ~100 termes techniques.",
             },
             {
-              icon: "📋",
-              title: "Collage automatique",
-              desc: "Le texte transcrit est collé directement à la position du curseur.",
+              icon: "📦",
+              title: "Installation DMG",
+              desc: "Téléchargez le DMG depuis GitHub Releases, ou pip install pour les devs.",
             },
           ].map((item) => (
             <div

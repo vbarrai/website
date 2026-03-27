@@ -54,13 +54,13 @@ export default function DocsIntroPage() {
           </h1>
         </div>
         <p className="text-lg text-cyan-400 font-medium mb-4">
-          Isolation shell légère pour agents AI
+          Isolation shell légère pour agents AI sur macOS
         </p>
         <p className="text-zinc-400 leading-relaxed max-w-2xl">
-          parcai confine un agent AI au répertoire du projet courant. Le système
-          de fichiers est restreint, les secrets sont inaccessibles. Il utilise
-          les primitives natives de l&apos;OS (namespaces Linux, sandbox-exec
-          macOS) — pas de VM ni Docker, overhead quasi nul, démarrage instantané.
+          parcai confine un agent AI au répertoire du projet courant sur macOS.
+          Le système de fichiers est restreint via APFS clone + sandbox-exec,
+          les secrets sont masqués par un proxy MITM local. Pas de VM ni Docker,
+          overhead quasi nul, démarrage instantané.
         </p>
       </div>
 
@@ -95,7 +95,12 @@ export default function DocsIntroPage() {
             {
               icon: "🔒",
               title: "Isolation native",
-              desc: "Clone APFS + sandbox-exec sur macOS, overlayfs + unshare sur Linux.",
+              desc: "Clone APFS + sandbox-exec sur macOS. Pas de support Linux.",
+            },
+            {
+              icon: "🔑",
+              title: "Secret masking",
+              desc: "Proxy MITM local qui remplace les vrais tokens par des faux dans le sandbox.",
             },
             {
               icon: "⚡",
@@ -105,7 +110,7 @@ export default function DocsIntroPage() {
             {
               icon: "🌐",
               title: "Réseau contrôlé",
-              desc: "Réseau activé par défaut pour les APIs AI, désactivable avec --no-network.",
+              desc: "Filtrage par domaine (allowlist/blocklist), désactivable avec --no-network.",
             },
             {
               icon: "✅",

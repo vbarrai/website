@@ -54,21 +54,24 @@ maconfai check`,
   },
   parcai: {
     name: "parcai",
-    tagline: "Isolation shell légère pour agents AI",
+    tagline: "Isolation shell légère pour agents AI sur macOS",
     description:
-      "parcai confine un agent AI au répertoire du projet courant. Le système de fichiers est restreint, les secrets sont inaccessibles. Utilise les primitives natives de l'OS (namespaces Linux, sandbox-exec macOS) — pas de VM ni Docker, overhead quasi nul, démarrage instantané.",
+      "parcai confine un agent AI au répertoire du projet courant sur macOS. Le système de fichiers est restreint via APFS clone + sandbox-exec, les secrets sont masqués par un proxy MITM local. Pas de VM ni Docker, overhead quasi nul, démarrage instantané.",
     features: [
-      "Confinement au répertoire projet sans VM ni Docker",
-      "Protection contre l'accès aux secrets et fichiers hors projet",
-      "Réseau activé par défaut (APIs AI), désactivable avec --no-network",
+      "Clone APFS copy-on-write + sandbox-exec natif macOS",
+      "Proxy MITM local : les vrais tokens sont remplacés par des faux dans le sandbox",
+      "Réseau contrôlé avec filtrage par domaine (allowlist/blocklist)",
       "Résumé des changements et confirmation avant application",
     ],
-    install: "cd my-project && parcai",
+    install: "git clone https://github.com/vbarrai/parcai && sudo cp parcai/parcai /usr/local/bin/",
     usage: `# Entrer dans le sandbox
 parcai
 
 # Désactiver le réseau
 parcai --no-network
+
+# Activer le masquage des secrets
+parcai --secrets
 
 # Autoriser des chemins supplémentaires
 parcai --allow /path/to/dir
@@ -86,25 +89,26 @@ parcai --apply`,
   },
   murmurai: {
     name: "murmurai",
-    tagline: "Transcription vocale push-to-talk pour macOS",
+    tagline: "Transcription vocale push-to-talk et assistant AI pour macOS",
     description:
-      "murmurai utilise faster-whisper pour transcrire votre voix localement sur macOS. Maintenez une touche (Option droite par défaut), parlez, relâchez — le texte est transcrit hors-ligne et collé automatiquement à la position du curseur. Aucune clé API requise.",
+      "murmurai utilise faster-whisper pour transcrire votre voix localement sur macOS. Mode Transcript : maintenez une touche, parlez, relâchez — le texte est collé au curseur. Mode Agent : envoyez votre voix + texte sélectionné à Ollama pour un traitement AI local. 100% hors-ligne, aucune clé API.",
     features: [
       "Transcription hors-ligne via faster-whisper, sans clé API",
-      "Transcription en streaming pendant que vous parlez",
-      "Collage automatique du texte à la position du curseur",
-      "Modèles Whisper configurables (tiny à large-v3)",
+      "Mode Agent : voix + sélection envoyées à Ollama pour traitement AI local",
+      "Fusion bilingue FR/EN avec dictionnaire de jargon technique (~100 termes)",
+      "Installation simple via DMG — modèle Whisper configurables (tiny à large-v3)",
     ],
-    install: "git clone https://github.com/vbarrai/murmurai && cd murmurai && pip install -e .",
-    usage: `# Activer l'environnement et lancer
+    install: "# Télécharger le DMG depuis GitHub Releases\n# Ou installation développeur :\ngit clone https://github.com/vbarrai/murmurai && cd murmurai && pip install -e .",
+    usage: `# Installation via DMG
+# Télécharger murmurai.dmg depuis GitHub Releases
+# Glisser dans /Applications
+
+# Ou lancer en mode développeur
 source .venv/bin/activate
 murmurai
 
-# Maintenir Option droite pour enregistrer et transcrire
-
-# Installer en tant qu'application standalone
-pip install -e ".[build]"
-make install`,
+# Mode Transcript : maintenir Option droite pour dicter
+# Mode Agent : maintenir la touche Agent pour envoyer à Ollama`,
     repo: "https://github.com/vbarrai/murmurai",
     color: "border-violet-500/30",
     accentBg: "bg-violet-500/10",
