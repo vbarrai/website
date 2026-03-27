@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import DocsProductSelector from "../../components/DocsProductSelector";
 
 const sections = [
   { slug: "", label: "Introduction" },
@@ -54,6 +55,9 @@ export default function DocsNav() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:block w-64 flex-shrink-0">
         <div className="sticky top-24">
+          <div className="mb-4 px-4">
+            <DocsProductSelector />
+          </div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4 px-4">
             Documentation
           </h3>
@@ -74,6 +78,9 @@ export default function DocsNav() {
 
       {/* Mobile dropdown */}
       <div className="lg:hidden mb-8">
+        <div className="mb-3">
+          <DocsProductSelector />
+        </div>
         <button
           onClick={() => setOpen(!open)}
           className="w-full flex items-center justify-between px-4 py-3 rounded-xl glass-card border border-white/10 text-sm text-zinc-200"
