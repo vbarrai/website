@@ -26,13 +26,37 @@ murmurai propose une alternative simple : un outil push-to-talk qui transcrit vo
       },
       {
         heading: "La solution murmurai",
-        body: `murmurai repose sur trois principes :
+        body: `murmurai repose sur quatre principes :
 
 1. 100% hors-ligne — Tout le traitement se fait localement grâce à faster-whisper, une implémentation optimisée d'OpenAI Whisper. Aucune donnée audio ne quitte votre Mac.
 
 2. Push-to-talk — Maintenez la touche Option droite (⌥), parlez, relâchez. Pas de commande vocale "start" / "stop", pas de bouton à cliquer.
 
-3. Zéro friction — Le texte transcrit est automatiquement collé à la position du curseur via une simulation de Cmd+V. Pas de fenêtre intermédiaire, pas de copier-coller manuel.`,
+3. Zéro friction — Le texte transcrit est automatiquement collé à la position du curseur via une simulation de Cmd+V. Pas de fenêtre intermédiaire, pas de copier-coller manuel.
+
+4. Mode Agent — Un second raccourci envoie votre voix et le texte sélectionné à un modèle Ollama local. La réponse AI remplace directement la sélection. Ollama est optionnel et n'est requis que pour ce mode.
+
+murmurai intègre également un système de fusion bilingue FR/EN avec un dictionnaire de ~100 termes de jargon technique, corrigeant automatiquement les termes mal reconnus (ex. "commettre" → "commit").`,
+      },
+      {
+        heading: "Mode Agent",
+        body: `Le Mode Agent est un second mode d'interaction qui transforme murmurai en assistant AI vocal :
+
+1. Sélectionnez du texte dans n'importe quelle application
+2. Maintenez la touche Agent (configurable)
+3. Dictez votre instruction vocale (ex. "refactorise cette fonction", "traduis en anglais")
+4. Relâchez la touche — murmurai envoie votre instruction + le texte sélectionné au modèle Ollama local
+5. La réponse AI remplace directement la sélection
+
+Le Mode Agent nécessite Ollama installé localement. Le modèle Ollama est sélectionnable dynamiquement depuis la barre de menu. Le streaming des réponses et l'annulation sont supportés.`,
+      },
+      {
+        heading: "Fusion bilingue",
+        body: `murmurai gère nativement la transcription bilingue français/anglais. Le système de fusion locale corrige automatiquement les termes techniques mal reconnus grâce à un dictionnaire de ~100 termes de jargon.
+
+Par exemple, Whisper peut transcrire "commettre" au lieu de "commit", ou "pousser" au lieu de "push". Le dictionnaire de jargon détecte et corrige ces erreurs en post-traitement, préservant la structure de phrase française tout en maintenant les termes techniques anglais corrects.
+
+Les utilisateurs peuvent ajouter leurs propres termes dans le fichier de configuration ~/.config/murmurai/config.json.`,
       },
       {
         heading: "Transcription en streaming",
@@ -56,28 +80,41 @@ Cinq tailles de modèle sont disponibles, du plus léger (tiny, ~75 Mo) au plus 
     description: "Guide d'installation de murmurai sur macOS.",
     content: [
       {
-        heading: "Prérequis",
-        body: `murmurai fonctionne exclusivement sur macOS. Vous avez besoin de :
+        heading: "Installation via DMG",
+        body: `La méthode d'installation recommandée est via le DMG disponible sur la page GitHub Releases :
 
-• macOS (version récente recommandée)
-• Python 3.9 ou supérieur
-• Un microphone (intégré ou externe)
-• ~500 Mo d'espace disque pour le modèle Whisper "small"`,
+1. Rendez-vous sur https://github.com/vbarrai/murmurai/releases
+2. Téléchargez le fichier murmurai.dmg de la dernière version
+3. Ouvrez le DMG et glissez murmurai dans /Applications
+4. Lancez murmurai depuis /Applications
+
+Le modèle Whisper (~500 Mo pour "small") se télécharge automatiquement au premier lancement.`,
       },
       {
-        heading: "Cloner le repository",
-        body: "Commencez par cloner le repository GitHub :",
+        heading: "Prérequis",
+        body: `murmurai fonctionne exclusivement sur macOS. Pour l'installation via DMG, vous avez uniquement besoin de :
+
+• macOS (version récente recommandée)
+• Un microphone (intégré ou externe)
+• ~500 Mo d'espace disque pour le modèle Whisper "small"
+
+Pour l'installation développeur, ajoutez :
+• Python 3.9 ou supérieur`,
+      },
+      {
+        heading: "Installation développeur — Cloner le repository",
+        body: "Pour contribuer ou modifier le code source, commencez par cloner le repository GitHub :",
         code: `git clone https://github.com/vbarrai/murmurai
 cd murmurai`,
       },
       {
-        heading: "Créer un environnement virtuel",
+        heading: "Installation développeur — Environnement virtuel",
         body: "Créez et activez un environnement Python isolé :",
         code: `python3 -m venv .venv
 source .venv/bin/activate`,
       },
       {
-        heading: "Installer murmurai",
+        heading: "Installation développeur — pip install",
         body: "Installez murmurai en mode développement (editable) :",
         code: `pip install -e .`,
       },
@@ -105,17 +142,19 @@ Ces permissions sont demandées automatiquement lors du premier lancement. L'app
 
   utilisation: {
     title: "Utilisation",
-    description: "Guide pratique du workflow push-to-talk.",
+    description: "Guide pratique des modes Transcript et Agent.",
     content: [
       {
         heading: "Lancer murmurai",
-        body: "Activez votre environnement virtuel et lancez murmurai :",
+        body: `Si vous avez installé via DMG, ouvrez simplement murmurai depuis /Applications ou Spotlight.
+
+En mode développeur, activez votre environnement virtuel et lancez murmurai :`,
         code: `source .venv/bin/activate
 murmurai`,
       },
       {
-        heading: "Workflow push-to-talk",
-        body: `Le workflow est simple :
+        heading: "Mode Transcript",
+        body: `Le Mode Transcript est le mode principal de dictée push-to-talk :
 
 1. Placez votre curseur là où vous voulez insérer du texte (éditeur de code, navigateur, chat, email…)
 2. Maintenez la touche Option droite (⌥) enfoncée
@@ -126,6 +165,28 @@ murmurai`,
 La transcription se fait en streaming — le texte est prêt quasi instantanément quand vous relâchez la touche.`,
       },
       {
+        heading: "Mode Agent",
+        body: `Le Mode Agent permet d'envoyer une instruction vocale et du texte sélectionné à un modèle Ollama local :
+
+1. Sélectionnez du texte dans n'importe quelle application
+2. Maintenez la touche Agent (configurable dans ~/.config/murmurai/config.json)
+3. Dictez votre instruction vocale (ex. "refactorise cette fonction", "traduis en anglais")
+4. Relâchez la touche — murmurai envoie l'instruction + le texte sélectionné au modèle Ollama
+5. La réponse AI remplace directement la sélection
+
+Le Mode Agent nécessite Ollama installé localement. Le modèle Ollama est sélectionnable dynamiquement depuis la barre de menu. Vous pouvez annuler une requête en cours à tout moment.`,
+      },
+      {
+        heading: "HUD overlay",
+        body: `murmurai affiche un HUD overlay visuel indiquant l'état du traitement en cours :
+
+• Enregistrement — Le HUD s'affiche quand vous maintenez la touche push-to-talk, confirmant que l'audio est capturé.
+• Transcription — Pendant le traitement de l'audio par Whisper, le HUD indique que la transcription est en cours.
+• Traitement Agent — En Mode Agent, le HUD affiche l'état de la requête Ollama (envoi, streaming de la réponse).
+
+Le HUD disparaît automatiquement une fois le traitement terminé.`,
+      },
+      {
         heading: "Cas d'usage",
         body: `murmurai est particulièrement utile pour :
 
@@ -134,12 +195,14 @@ La transcription se fait en streaming — le texte est prêt quasi instantanéme
 • Prendre des notes rapidement
 • Dicter du texte dans n'importe quelle application
 • Répondre dans un chat ou un terminal
+• Refactoriser du code via le Mode Agent
+• Traduire du texte sélectionné via instruction vocale
 
 Le texte est collé dans n'importe quelle application qui accepte Cmd+V.`,
       },
       {
         heading: "Logs et diagnostic",
-        body: "Les logs de l'application sont écrits dans un fichier dédié, utile pour le diagnostic :",
+        body: "Les logs de l'application sont accessibles depuis le menu \"Open Logs\" ou directement dans le fichier dédié :",
         code: `# Emplacement des logs
 ~/Library/Logs/murmurai/murmurai.log
 
@@ -153,8 +216,25 @@ tail -f ~/Library/Logs/murmurai/murmurai.log`,
 
   configuration: {
     title: "Configuration",
-    description: "Configurer les modèles Whisper et les options de murmurai.",
+    description: "Configurer murmurai via le fichier de configuration, les modèles et les raccourcis.",
     content: [
+      {
+        heading: "Fichier de configuration",
+        body: `murmurai se configure via le fichier ~/.config/murmurai/config.json. Ce fichier est créé automatiquement au premier lancement avec les valeurs par défaut. Vous pouvez le modifier pour personnaliser le comportement de murmurai.`,
+        code: `{
+  "model_size": "small",
+  "language": "fr",
+  "hotkey_transcript": "right_option",
+  "hotkey_agent": "right_command",
+  "ollama_model": "llama3",
+  "jargon": {
+    "commettre": "commit",
+    "pousser": "push",
+    "tirer": "pull",
+    "fusionner": "merge"
+  }
+}`,
+      },
       {
         heading: "Modèles Whisper disponibles",
         body: `murmurai supporte cinq tailles de modèle Whisper. Le choix du modèle affecte la vitesse de transcription et la qualité :
@@ -167,32 +247,66 @@ tail -f ~/Library/Logs/murmurai/murmurai.log`,
 | medium   | ~1.5 Go   | Lente       | Très bonne  |
 | large-v3 | ~3 Go     | Très lente  | Meilleure   |
 
-Le modèle par défaut est "small", qui offre le meilleur compromis entre vitesse et qualité pour un usage quotidien.`,
+Le modèle par défaut est "small", qui offre le meilleur compromis entre vitesse et qualité pour un usage quotidien. Le modèle est également sélectionnable directement depuis la barre de menu de murmurai.`,
       },
       {
         heading: "Changer le modèle",
-        body: `Pour changer le modèle Whisper utilisé, modifiez la configuration dans le fichier murmurai/transcriber.py. Recherchez la ligne de configuration du modèle et remplacez la valeur par la taille souhaitée.
+        body: `Le modèle Whisper peut être changé de deux façons :
 
-Le modèle sera téléchargé automatiquement au prochain lancement si nécessaire.`,
-        code: `# Dans murmurai/transcriber.py
+1. Depuis la barre de menu — Cliquez sur l'icône murmurai dans la barre de menu et sélectionnez la taille de modèle souhaitée. Le changement est immédiat.
+
+2. Via le fichier de configuration — Modifiez la clé "model_size" dans ~/.config/murmurai/config.json.
+
+Le modèle sera téléchargé automatiquement si nécessaire (la première fois uniquement).`,
+        code: `# Dans ~/.config/murmurai/config.json
 # Changer "small" par "tiny", "base", "medium" ou "large-v3"
-model_size = "small"`,
+"model_size": "small"`,
       },
       {
         heading: "Touche de raccourci",
-        body: `Par défaut, murmurai utilise la touche Option droite (⌥ Right Option) comme touche push-to-talk. Cette touche a été choisie car :
+        body: `Les raccourcis clavier sont configurables via le fichier ~/.config/murmurai/config.json :
 
-• Elle est facilement accessible sans quitter la position de frappe
-• Elle n'interfère pas avec les raccourcis clavier courants
-• Elle est rarement utilisée seule dans les applications
+• hotkey_transcript — Touche pour le Mode Transcript (défaut : Option droite). Maintenez pour dicter, relâchez pour transcrire et coller.
+• hotkey_agent — Touche pour le Mode Agent (défaut : Command droite). Maintenez pour dicter une instruction, relâchez pour envoyer à Ollama.
 
-La configuration de la touche se fait dans le code source (murmurai/app.py).`,
+Il n'est plus nécessaire de modifier le code source pour changer les raccourcis.`,
+        code: `# Dans ~/.config/murmurai/config.json
+"hotkey_transcript": "right_option",
+"hotkey_agent": "right_command"`,
+      },
+      {
+        heading: "Dictionnaire de jargon",
+        body: `murmurai intègre un dictionnaire de ~100 termes de jargon technique pour corriger les erreurs courantes de transcription bilingue FR/EN. Par exemple :
+
+• "commettre" → "commit"
+• "pousser" → "push"
+• "tirer" → "pull"
+• "fusionner" → "merge"
+• "déployer" → "deploy"
+
+Les termes sont appliqués en post-traitement via une fusion locale (sans Ollama). Vous pouvez ajouter vos propres termes dans la section "jargon" du fichier de configuration :`,
+        code: `# Dans ~/.config/murmurai/config.json
+"jargon": {
+  "commettre": "commit",
+  "pousser": "push",
+  "mon terme": "my_term"
+}`,
       },
       {
         heading: "Langue de transcription",
-        body: `faster-whisper détecte automatiquement la langue parlée. Le modèle supporte plus de 90 langues, dont le français, l'anglais, l'espagnol, l'allemand, le chinois, le japonais, etc.
+        body: `La langue de transcription est configurable dans ~/.config/murmurai/config.json via la clé "language". murmurai supporte la transcription bilingue FR/EN nativement, avec fusion locale de jargon.
 
-Aucune configuration de langue n'est nécessaire — parlez simplement dans la langue souhaitée et Whisper s'adapte automatiquement.`,
+faster-whisper supporte plus de 90 langues. La détection automatique est également disponible si aucune langue n'est spécifiée.`,
+      },
+      {
+        heading: "Modèles Ollama",
+        body: `Le Mode Agent nécessite Ollama installé localement (https://ollama.ai). Ollama n'est pas requis pour le Mode Transcript.
+
+Le modèle Ollama utilisé par le Mode Agent est sélectionnable dynamiquement depuis la barre de menu de murmurai. murmurai détecte automatiquement les modèles disponibles dans votre installation Ollama.
+
+Vous pouvez également définir un modèle par défaut dans le fichier de configuration :`,
+        code: `# Dans ~/.config/murmurai/config.json
+"ollama_model": "llama3"`,
       },
     ],
     prev: { slug: "utilisation", label: "Utilisation" },
@@ -213,11 +327,12 @@ Aucune configuration de langue n'est nécessaire — parlez simplement dans la l
 • sounddevice + soundfile — Capture et traitement audio
 • numpy — Traitement numérique des signaux audio
 • rumps — Menu bar macOS
+• Ollama (optionnel) — Modèles AI locaux pour le Mode Agent
 • PyInstaller — Packaging en app standalone`,
       },
       {
         heading: "Modules source",
-        body: "Le code source est organisé en cinq modules dans le répertoire murmurai/ :",
+        body: "Le code source est organisé en modules dans le répertoire murmurai/ :",
         code: `murmurai/
 ├── __init__.py       # Point d'entrée du package
 ├── app.py            # Application principale, boucle push-to-talk
@@ -228,19 +343,52 @@ Aucune configuration de langue n'est nécessaire — parlez simplement dans la l
 │                     # Configuration du modèle, streaming
 ├── paster.py         # Collage automatique via System Events
 │                     # Simulation de Cmd+V à la position curseur
+├── agent.py          # Mode Agent — communication avec Ollama
+│                     # Streaming réponses, annulation
+├── hud.py            # HUD overlay — affichage statut
+│                     # (recording, transcribing, processing)
+├── jargon.py         # Fusion bilingue FR/EN
+│                     # Dictionnaire de ~100 termes techniques
 └── (pyproject.toml)  # Métadonnées, dépendances, entry point`,
       },
       {
-        heading: "Pipeline audio",
-        body: `Le flux de données suit un pipeline linéaire :
+        heading: "Pipeline audio — Mode Transcript",
+        body: `Le flux de données du Mode Transcript suit un pipeline linéaire :
 
 1. recorder.py — Capture l'audio du microphone en temps réel via sounddevice. L'audio est bufferisé en segments.
 
 2. transcriber.py — Reçoit les segments audio et les transcrit via faster-whisper en mode streaming. Les résultats partiels sont accumulés.
 
-3. paster.py — Au relâchement de la touche, prend le texte transcrit final et simule un Cmd+V pour le coller à la position du curseur.
+3. jargon.py — Applique la fusion bilingue FR/EN et corrige les termes techniques via le dictionnaire de jargon.
 
-4. app.py — Orchestre tout le pipeline : détecte l'appui/relâchement de la touche, démarre/arrête l'enregistrement, lance la transcription et déclenche le collage.`,
+4. paster.py — Prend le texte transcrit final et simule un Cmd+V pour le coller à la position du curseur.
+
+5. app.py — Orchestre tout le pipeline : détecte l'appui/relâchement de la touche, démarre/arrête l'enregistrement, lance la transcription et déclenche le collage.`,
+      },
+      {
+        heading: "Pipeline audio — Mode Agent",
+        body: `Le Mode Agent étend le pipeline avec une étape Ollama :
+
+1. recorder.py — Capture l'audio de l'instruction vocale.
+
+2. transcriber.py — Transcrit l'instruction vocale.
+
+3. agent.py — Récupère le texte sélectionné dans l'application active, construit un prompt combinant l'instruction vocale et la sélection, envoie le tout au modèle Ollama local. La réponse est streamée en temps réel.
+
+4. paster.py — Remplace la sélection originale par la réponse d'Ollama.
+
+5. hud.py — Affiche l'état du traitement (recording, transcribing, processing) tout au long du pipeline. L'utilisateur peut annuler à tout moment.`,
+      },
+      {
+        heading: "Système de jargon",
+        body: `Le module jargon.py gère la fusion bilingue FR/EN en post-traitement :
+
+1. Le texte transcrit par Whisper est analysé mot par mot.
+2. Chaque mot est comparé au dictionnaire de ~100 termes techniques intégrés.
+3. Les termes français correspondant à du jargon technique anglais sont remplacés (ex. "commettre" → "commit").
+4. La structure de phrase française est préservée — seuls les termes techniques sont corrigés.
+
+Le dictionnaire intégré couvre les termes courants du développement logiciel, DevOps, et de l'infrastructure. Les utilisateurs peuvent ajouter leurs propres termes via ~/.config/murmurai/config.json.`,
       },
       {
         heading: "Dépendances",
@@ -253,7 +401,8 @@ Aucune configuration de langue n'est nécessaire — parlez simplement dans la l
 • faster-whisper (>=1.0.0) — Implémentation CTranslate2 de Whisper
 • rumps (>=0.4.0) — Menu bar macOS natif
 
-Dépendance optionnelle :
+Dépendances optionnelles :
+• ollama — Client Python pour communiquer avec Ollama (Mode Agent)
 • pyinstaller (>=6.0.0) — Pour la création d'apps standalone`,
       },
     ],
@@ -263,20 +412,41 @@ Dépendance optionnelle :
 
   distribution: {
     title: "Distribution",
-    description: "Créer et distribuer murmurai en tant qu'application macOS standalone.",
+    description: "Installer et distribuer murmurai en tant qu'application macOS.",
     content: [
       {
-        heading: "Installer les dépendances de build",
-        body: "Avant de créer une app standalone, installez les dépendances de build (PyInstaller) :",
+        heading: "Installation via DMG",
+        body: `La méthode recommandée pour installer murmurai est via le DMG disponible sur la page GitHub Releases :
+
+1. Rendez-vous sur https://github.com/vbarrai/murmurai/releases
+2. Téléchargez le fichier murmurai.dmg de la dernière version
+3. Ouvrez le DMG et glissez murmurai dans /Applications
+4. Lancez murmurai depuis /Applications ou Spotlight
+
+Le modèle Whisper se télécharge automatiquement au premier lancement. Aucune installation de Python n'est requise.`,
+      },
+      {
+        heading: "Build automatisé via GitHub Actions",
+        body: `Le DMG est généré automatiquement via GitHub Actions. À chaque push d'un tag de version (ex. v0.2.0), le workflow CI :
+
+1. Construit l'application via PyInstaller
+2. Génère le DMG
+3. Publie le DMG en tant qu'asset sur la page GitHub Releases
+
+Cela garantit que chaque release dispose d'un DMG prêt à l'emploi.`,
+      },
+      {
+        heading: "Build local — Dépendances",
+        body: "Pour créer un build local, installez les dépendances de build (PyInstaller) :",
         code: `pip install -e ".[build]"`,
       },
       {
-        heading: "Créer le bundle",
+        heading: "Build local — Créer le bundle",
         body: "La commande make build génère un bundle .app dans le répertoire .build/ sans l'installer :",
         code: `make build`,
       },
       {
-        heading: "Installer dans /Applications",
+        heading: "Build local — Installer dans /Applications",
         body: "La commande make install crée le bundle et le copie automatiquement dans /Applications/ :",
         code: `make install`,
       },
@@ -295,9 +465,9 @@ Le fichier murmurai.spec contient la configuration PyInstaller — icônes, mét
         heading: "Application standalone vs développement",
         body: `Il y a deux façons d'utiliser murmurai :
 
-Mode développement — Exécution directe depuis le code source via python/pip. Idéal pour le développement et le test de modifications. Les changements de code sont immédiatement disponibles sans rebuild.
+Mode DMG/standalone — Téléchargez le DMG depuis GitHub Releases ou créez-le localement. Application .app dans /Applications/. Pas besoin de Python installé, pas d'environnement virtuel. Double-cliquer pour lancer. Idéal pour un usage quotidien.
 
-Mode standalone — Application .app dans /Applications/. Pas besoin de Python installé, pas d'environnement virtuel. Double-cliquer pour lancer. Idéal pour un usage quotidien.`,
+Mode développement — Exécution directe depuis le code source via python/pip. Idéal pour le développement et le test de modifications. Les changements de code sont immédiatement disponibles sans rebuild.`,
       },
     ],
     prev: { slug: "architecture", label: "Architecture" },

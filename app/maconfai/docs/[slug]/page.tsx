@@ -54,17 +54,22 @@ Cela signifie qu'un seul fichier physique alimente tous vos agents. Mettre à jo
         code: `skills/
 ├── ma-skill-1/
 │   └── SKILL.md
-├── ma-skill-2/
-│   ├── SKILL.md
-│   └── data.json
-└── ma-skill-3/
-    └── SKILL.md`,
+└── ma-skill-2/
+    └── SKILL.md
+mcps/
+├── github/
+│   └── mcp.json
+└── filesystem/
+    └── mcp.json
+hooks/
+└── pre-commit/
+    └── hooks.json`,
       },
       {
         heading: "Types de configuration",
         body: `Au-delà des skills (SKILL.md), maconfai gère également :
 
-• Serveurs MCP — Définis dans des fichiers mcp.json, fusionnés dans la configuration spécifique de chaque agent.
+• Serveurs MCP — Définis dans des fichiers mcp.json placés dans un répertoire dédié mcps/ (ex : mcps/github/mcp.json, mcps/filesystem/mcp.json), fusionnés dans la configuration spécifique de chaque agent.
 • Hooks — Définis dans des fichiers hooks.json pour les gestionnaires d'événements spécifiques à chaque agent.
 
 Ces trois types de configuration (skills, MCP, hooks) sont traités uniformément par le système d'installation.`,
@@ -487,7 +492,7 @@ Note : maconfai traduit automatiquement la syntaxe des variables d'environnement
 │   ├── source-parser.ts # Parse les sources (GitHub, local)
 │   ├── lock.ts          # Gestion du lock file (ai-lock.json)
 │   ├── check.ts         # Détection des mises à jour (tree hash)
-│   ├── mcp.ts           # Install/uninstall serveurs MCP
+│   ├── mcp.ts           # Install/uninstall serveurs MCP (configs dans mcps/)
 │   └── hooks.ts         # Install/uninstall hooks
 ├── tests/               # Tests organisés par feature
 ├── bin/cli.mjs           # Exécutable CLI
@@ -533,7 +538,10 @@ Note : maconfai traduit automatiquement la syntaxe des variables d'environnement
         heading: "Build et distribution",
         body: `Le projet est distribué via npm :
 
-• Taille du build : ~91.4 kB (minifié + gzip)
+• Taille du build : 91.4 kB (minifié + gzip)
+• Couverture de tests : 73%
+• CI : GitHub Actions (lint, tests, typecheck)
+• Publication : npm publish workflow avec trusted publishing
 • Format : ESM (ECMAScript Modules)
 • Point d'entrée : bin/cli.mjs
 • Licence : MIT`,
