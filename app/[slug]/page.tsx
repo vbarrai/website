@@ -18,6 +18,7 @@ const projects: Record<
     gradientFrom: string;
     gradientTo: string;
     docs?: string;
+    download?: { label: string; url: string };
   }
 > = {
   maconfai: {
@@ -108,6 +109,10 @@ brew install --cask vbarrai/tap/murmurai
 # Mode Transcript : maintenir Option droite pour dicter
 # Mode Agent : maintenir la touche Agent pour envoyer à Ollama`,
     repo: "https://github.com/vbarrai/murmurai",
+    download: {
+      label: "Télécharger le .dmg (GitHub Releases)",
+      url: "https://github.com/vbarrai/murmurai/releases/latest",
+    },
     color: "border-violet-500/30",
     accentBg: "bg-violet-500/10",
     accentText: "text-violet-400",
@@ -265,6 +270,17 @@ export default async function ProjectPage({
               </code>
             </pre>
           </div>
+          {project.download && (
+            <a
+              href={project.download.url}
+              className={`inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-full ${project.accentBg} border ${project.accentBorder} ${project.accentText} text-sm font-medium hover:bg-white/10 transition-all`}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              {project.download.label}
+            </a>
+          )}
         </div>
       </section>
 
