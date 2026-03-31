@@ -77,6 +77,16 @@ C'est l'approche la plus légère possible pour isoler un processus tout en cons
 • Un agent AI installé (Claude Code, Cursor, Codex, etc.)`,
       },
       {
+        heading: "Installation via Homebrew (recommandée)",
+        body: "La méthode la plus simple pour installer et mettre à jour parcai :",
+        code: `brew install vbarrai/tap/parcai`,
+      },
+      {
+        heading: "Installation via script",
+        body: "Alternativement, un script d'installation est disponible :",
+        code: `curl -sSL https://raw.githubusercontent.com/vbarrai/parcai/main/install.sh | bash`,
+      },
+      {
         heading: "Installation manuelle depuis GitHub",
         body: "Vous pouvez aussi cloner le dépôt et utiliser le script directement :",
         code: `git clone https://github.com/vbarrai/parcai.git

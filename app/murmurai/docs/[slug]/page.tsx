@@ -80,8 +80,13 @@ Cinq tailles de modèle sont disponibles, du plus léger (tiny, ~75 Mo) au plus 
     description: "Guide d'installation de murmurai sur macOS.",
     content: [
       {
+        heading: "Installation via Homebrew (recommandée)",
+        body: "La méthode la plus simple pour installer et mettre à jour murmurai :",
+        code: `brew install --cask vbarrai/tap/murmurai`,
+      },
+      {
         heading: "Installation via DMG",
-        body: `La méthode d'installation recommandée est via le DMG disponible sur la page GitHub Releases :
+        body: `Vous pouvez aussi télécharger le DMG depuis la page GitHub Releases :
 
 1. Rendez-vous sur https://github.com/vbarrai/murmurai/releases
 2. Téléchargez le fichier murmurai.dmg de la dernière version

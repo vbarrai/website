@@ -77,6 +77,8 @@ export default function DocsIntroPage() {
             </span>
           </div>
           <pre className="font-mono text-sm overflow-x-auto text-cyan-400">
+            <span className="text-zinc-500">$ </span>brew install vbarrai/tap/parcai{"\n"}
+            {"\n"}
             <span className="text-zinc-500">$ </span>cd my-project{"\n"}
             <span className="text-zinc-500">$ </span>parcai
           </pre>

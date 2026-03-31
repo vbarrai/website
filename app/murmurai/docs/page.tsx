@@ -79,18 +79,10 @@ export default function DocsIntroPage() {
             </span>
           </div>
           <pre className="font-mono text-sm overflow-x-auto text-violet-400">
-            <span className="text-zinc-600"># Installation via DMG (recommandée)</span>{"\n"}
-            <span className="text-zinc-500">$ </span>open https://github.com/vbarrai/murmurai/releases{"\n"}
-            <span className="text-zinc-600"># Télécharger murmurai.dmg, glisser dans /Applications</span>{"\n"}
+            <span className="text-zinc-500">$ </span>brew install --cask vbarrai/tap/murmurai{"\n"}
             {"\n"}
-            <span className="text-zinc-600"># Ou installation développeur</span>{"\n"}
-            <span className="text-zinc-500">$ </span>git clone
-            https://github.com/vbarrai/murmurai{"\n"}
-            <span className="text-zinc-500">$ </span>cd murmurai{"\n"}
-            <span className="text-zinc-500">$ </span>python3 -m venv .venv
-            &amp;&amp; source .venv/bin/activate{"\n"}
-            <span className="text-zinc-500">$ </span>pip install -e .{"\n"}
-            <span className="text-zinc-500">$ </span>murmurai
+            <span className="text-zinc-600"># Ou via DMG depuis GitHub Releases</span>{"\n"}
+            <span className="text-zinc-500">$ </span>open https://github.com/vbarrai/murmurai/releases
           </pre>
         </div>
         <p className="text-sm text-zinc-500 mt-3">
@@ -121,8 +113,8 @@ export default function DocsIntroPage() {
             },
             {
               icon: "📦",
-              title: "Installation DMG",
-              desc: "Téléchargez le DMG depuis GitHub Releases, ou pip install pour les devs.",
+              title: "Installation simple",
+              desc: "Via Homebrew, DMG depuis GitHub Releases, ou pip install pour les devs.",
             },
           ].map((item) => (
             <div
