@@ -63,7 +63,7 @@ maconfai check`,
       "Réseau contrôlé avec filtrage par domaine (allowlist/blocklist)",
       "Résumé des changements et confirmation avant application",
     ],
-    install: "git clone https://github.com/vbarrai/parcai && sudo cp parcai/parcai /usr/local/bin/",
+    install: "brew install vbarrai/tap/parcai",
     usage: `# Entrer dans le sandbox
 parcai
 
@@ -96,16 +96,14 @@ parcai --apply`,
       "Transcription hors-ligne via faster-whisper, sans clé API",
       "Mode Agent : voix + sélection envoyées à Ollama pour traitement AI local",
       "Fusion bilingue FR/EN avec dictionnaire de jargon technique (~100 termes)",
-      "Installation simple via DMG — modèle Whisper configurables (tiny à large-v3)",
+      "Installation simple via Homebrew ou DMG — modèle Whisper configurables (tiny à large-v3)",
     ],
-    install: "# Télécharger le DMG depuis GitHub Releases\n# Ou installation développeur :\ngit clone https://github.com/vbarrai/murmurai && cd murmurai && pip install -e .",
-    usage: `# Installation via DMG
-# Télécharger murmurai.dmg depuis GitHub Releases
-# Glisser dans /Applications
+    install: "brew install --cask vbarrai/tap/murmurai",
+    usage: `# Installation via Homebrew (recommandée)
+brew install --cask vbarrai/tap/murmurai
 
-# Ou lancer en mode développeur
-source .venv/bin/activate
-murmurai
+# Ou via DMG depuis GitHub Releases
+# https://github.com/vbarrai/murmurai/releases
 
 # Mode Transcript : maintenir Option droite pour dicter
 # Mode Agent : maintenir la touche Agent pour envoyer à Ollama`,

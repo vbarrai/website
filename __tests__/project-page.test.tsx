@@ -89,7 +89,7 @@ describe("Project pages", () => {
 
     it("displays the installation command", async () => {
       await renderProjectPage("parcai");
-      expect(screen.getByText("pip install parcai")).toBeInTheDocument();
+      expect(screen.getByText("brew install vbarrai/tap/parcai")).toBeInTheDocument();
     });
 
     it("displays features", async () => {
@@ -123,7 +123,7 @@ describe("Project pages", () => {
 
     it("displays the installation command", async () => {
       await renderProjectPage("murmurai");
-      expect(screen.getByText("pip install murmurai")).toBeInTheDocument();
+      expect(screen.getByText("brew install --cask vbarrai/tap/murmurai")).toBeInTheDocument();
     });
 
     it("displays features", async () => {
