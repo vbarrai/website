@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -44,6 +45,12 @@ export default function Navbar() {
               {item}
             </a>
           ))}
+          <Link
+            href="/quiz"
+            className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            AI Pair Quiz
+          </Link>
         </div>
 
         {/* CTA */}
