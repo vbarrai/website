@@ -79,7 +79,7 @@ export default function DocsIntroPage() {
           </div>
           <pre className="font-mono text-sm overflow-x-auto">
             <code>
-              <span className="text-zinc-500">$ </span>
+              <span className="text-zinc-500 select-none">$ </span>
               <span className="text-indigo-400">
                 npx maconfai install owner/repo
               </span>

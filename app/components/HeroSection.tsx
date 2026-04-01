@@ -50,17 +50,23 @@ export default function HeroSection() {
       <NeuralBackground />
 
       {/* Floating particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <div
-          key={i}
-          className="particle"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDuration: `${8 + Math.random() * 12}s`,
-            animationDelay: `${Math.random() * 10}s`,
-          }}
-        />
-      ))}
+      {Array.from({ length: 20 }).map((_, i) => {
+        const seed = (i * 137.508 + 47) % 100;
+        const left = seed;
+        const duration = 8 + ((i * 31 + 13) % 120) / 10;
+        const delay = ((i * 73 + 29) % 100) / 10;
+        return (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${left}%`,
+              animationDuration: `${duration}s`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+        );
+      })}
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
@@ -126,7 +132,7 @@ export default function HeroSection() {
             </div>
             <div className="p-5 text-left text-sm leading-relaxed overflow-x-auto">
               <p className="text-zinc-500">
-                <span className="text-emerald-400">$</span> npx maconfai install vbarrai/skills
+                <span className="text-emerald-400 select-none">$ </span>npx maconfai install vbarrai/skills
               </p>
               <p className="text-zinc-600 mt-1">
                 <span className="text-cyan-400">→</span> Fetching skills from GitHub...

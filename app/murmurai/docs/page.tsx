@@ -79,10 +79,10 @@ export default function DocsIntroPage() {
             </span>
           </div>
           <pre className="font-mono text-sm overflow-x-auto text-violet-400">
-            <span className="text-zinc-500">$ </span>brew install --cask vbarrai/tap/murmurai{"\n"}
+            <span className="text-zinc-500 select-none">$ </span>brew install --cask vbarrai/tap/murmurai{"\n"}
             {"\n"}
             <span className="text-zinc-600"># Ou via DMG depuis GitHub Releases</span>{"\n"}
-            <span className="text-zinc-500">$ </span>open https://github.com/vbarrai/murmurai/releases
+            <span className="text-zinc-500 select-none">$ </span>open https://github.com/vbarrai/murmurai/releases
           </pre>
         </div>
         <p className="text-sm text-zinc-500 mt-3">

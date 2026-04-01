@@ -265,7 +265,7 @@ export default async function ProjectPage({
             </div>
             <pre className="font-mono text-sm overflow-x-auto">
               <code>
-                <span className="text-zinc-500">$ </span>
+                <span className="text-zinc-500 select-none">$ </span>
                 <span className={project.accentText}>{project.install}</span>
               </code>
             </pre>
@@ -336,7 +336,7 @@ export default async function ProjectPage({
                     <span className="text-zinc-600">{line}</span>
                   ) : line.trim() ? (
                     <>
-                      <span className="text-zinc-500">$ </span>
+                      <span className="text-zinc-500 select-none">$ </span>
                       <span className={project.accentText}>
                         {line.replace(/^maconfai|^parcai|^murmurai/, (m) => m)}
                       </span>

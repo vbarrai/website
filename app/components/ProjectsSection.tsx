@@ -49,7 +49,7 @@ export default function ProjectsSection() {
             <a
               key={project.name}
               href={`/${project.name}`}
-              className={`glass-card rounded-2xl p-6 border ${project.color} group cursor-pointer`}
+              className={`glass-card rounded-2xl p-6 border ${project.color} group cursor-pointer flex flex-col`}
             >
               {/* Header row */}
               <div className="flex items-start justify-between mb-4">
@@ -75,7 +75,7 @@ export default function ProjectsSection() {
               </p>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-auto">
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
