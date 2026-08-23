@@ -61,8 +61,8 @@ export default function DocsIntroPage() {
           sur macOS. Mode Transcript : maintenez une touche, parlez, relâchez
           — le texte est collé au curseur. Mode Agent : envoyez votre voix +
           texte sélectionné à un modèle Ollama local pour un traitement AI.
-          Fusion bilingue FR/EN avec dictionnaire de jargon technique. 100%
-          hors-ligne, aucune clé API requise.
+          Dictionnaire de ~100 termes de jargon technique pour corriger les
+          termes anglais francisés. 100% hors-ligne, aucune clé API requise.
         </p>
       </div>
 

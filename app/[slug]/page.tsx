@@ -96,8 +96,10 @@ parcai --apply`,
     features: [
       "Transcription hors-ligne via faster-whisper, sans clé API",
       "Mode Agent : voix + sélection envoyées à Ollama pour traitement AI local",
-      "Fusion bilingue FR/EN avec dictionnaire de jargon technique (~100 termes)",
-      "Installation simple via Homebrew ou DMG — modèle Whisper configurables (tiny à large-v3)",
+      "Dictionnaire de ~100 termes de jargon technique corrigeant les termes anglais francisés",
+      "Deux permissions macOS seulement — Accessibilité et Micro, pas d'Automation",
+      "Sélection du micro, sons de feedback, coupure des haut-parleurs, lancement au login",
+      "Installation simple via Homebrew ou DMG — modèle Whisper configurable (tiny à large-v3)",
     ],
     install: "brew install --cask vbarrai/tap/murmurai",
     usage: `# Installation via Homebrew (recommandée)
