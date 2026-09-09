@@ -36,7 +36,7 @@ murmurai propose une alternative simple : un outil push-to-talk qui transcrit vo
 
 4. Mode Agent — Un second raccourci envoie votre voix et le texte sélectionné à un modèle Ollama local. La réponse AI remplace directement la sélection. Ollama est optionnel et n'est requis que pour ce mode.
 
-murmurai intègre également un système de fusion bilingue FR/EN avec un dictionnaire de ~100 termes de jargon technique, corrigeant automatiquement les termes mal reconnus (ex. "commettre" → "commit").`,
+murmurai intègre également un dictionnaire de ~100 termes de jargon technique, appliqué en post-traitement pour corriger les termes anglais francisés par Whisper (ex. "commiter" → "commit").`,
       },
       {
         heading: "Mode Agent",
@@ -51,10 +51,12 @@ murmurai intègre également un système de fusion bilingue FR/EN avec un dictio
 Le Mode Agent nécessite Ollama installé localement. Le modèle Ollama est sélectionnable dynamiquement depuis la barre de menu. Le streaming des réponses et l'annulation sont supportés.`,
       },
       {
-        heading: "Fusion bilingue",
-        body: `murmurai gère nativement la transcription bilingue français/anglais. Le système de fusion locale corrige automatiquement les termes techniques mal reconnus grâce à un dictionnaire de ~100 termes de jargon.
+        heading: "Correction du jargon technique",
+        body: `Quand on dicte du français parsemé de termes techniques anglais, Whisper a tendance à les franciser : "commit" devient "commiter", "push" devient "pousher", "debug" devient "débugger".
 
-Par exemple, Whisper peut transcrire "commettre" au lieu de "commit", ou "pousser" au lieu de "push". Le dictionnaire de jargon détecte et corrige ces erreurs en post-traitement, préservant la structure de phrase française tout en maintenant les termes techniques anglais corrects.
+murmurai corrige ces termes en post-traitement. Après la passe de transcription française, le texte est comparé à un dictionnaire d'environ 100 termes techniques, chacun associé aux variantes francisées que Whisper peut produire. La correspondance est insensible à la casse et purement locale — une recherche par expression régulière, sans appel réseau ni LLM.
+
+Seules les variantes franglaises sont listées. Les vrais mots français ("pousser", "fusionner", …) en sont volontairement absents : quand le terme anglais est effectivement prononcé en anglais, Whisper le transcrit déjà correctement, et réécrire de vrais mots français corromprait des phrases ordinaires.
 
 Les utilisateurs peuvent ajouter leurs propres termes dans le fichier de configuration ~/.config/murmurai/config.json.`,
       },
@@ -130,15 +132,15 @@ source .venv/bin/activate`,
       },
       {
         heading: "Permissions macOS",
-        body: `Au premier lancement, macOS vous demandera trois permissions :
+        body: `Au premier lancement, macOS vous demandera deux permissions :
 
-1. Accessibilité — Nécessaire pour détecter le raccourci clavier global (Option droite). Accordez cette permission dans Préférences Système > Confidentialité > Accessibilité.
+1. Accessibilité — Nécessaire pour détecter le raccourci clavier global (Option droite) et pour coller le texte à la position du curseur. Accordez cette permission dans Réglages Système > Confidentialité et sécurité > Accessibilité.
 
 2. Microphone — Nécessaire pour capturer l'audio. La permission est demandée automatiquement.
 
-3. Automation (System Events) — Nécessaire pour simuler le collage (Cmd+V) à la position du curseur.
+Ces permissions sont demandées automatiquement lors du premier lancement. L'application s'active immédiatement après autorisation, sans redémarrage.
 
-Ces permissions sont demandées automatiquement lors du premier lancement. L'application s'active immédiatement après autorisation, sans redémarrage.`,
+Les versions antérieures exigeaient une troisième permission, Automation (System Events), parce que le collage passait par osascript. Le collage émet désormais un Cmd+V synthétique via CGEvent, déjà couvert par l'Accessibilité — cette demande a donc disparu. Si elle apparaît encore dans les Réglages Système, vous pouvez la révoquer.`,
       },
     ],
     prev: { slug: "concept", label: "Concept" },
@@ -167,7 +169,7 @@ murmurai`,
 4. Relâchez la touche Option droite
 5. Le texte transcrit est automatiquement collé à la position du curseur
 
-La transcription se fait en streaming — le texte est prêt quasi instantanément quand vous relâchez la touche.`,
+La transcription démarre au relâchement de la touche : l'audio est enregistré tant que vous maintenez, puis transcrit d'un bloc. Une icône configurable (🎙️ par défaut) peut être ajoutée devant le texte collé, pour que vos interlocuteurs — sur Slack par exemple — reconnaissent une transcription vocale.`,
       },
       {
         heading: "Mode Agent",
@@ -185,11 +187,26 @@ Le Mode Agent nécessite Ollama installé localement. Le modèle Ollama est sél
         heading: "HUD overlay",
         body: `murmurai affiche un HUD overlay visuel indiquant l'état du traitement en cours :
 
-• Enregistrement — Le HUD s'affiche quand vous maintenez la touche push-to-talk, confirmant que l'audio est capturé.
-• Transcription — Pendant le traitement de l'audio par Whisper, le HUD indique que la transcription est en cours.
-• Traitement Agent — En Mode Agent, le HUD affiche l'état de la requête Ollama (envoi, streaming de la réponse).
+• Enregistrement — Le HUD s'affiche quand vous maintenez la touche push-to-talk, avec un waveform en direct alimenté par le niveau du micro : vous voyez immédiatement si votre voix est bien captée.
+• Transcription — Pendant le traitement de l'audio par Whisper, le HUD indique que la transcription est en cours et affiche le texte au fur et à mesure.
+• Traitement Agent — En Mode Agent, le HUD affiche le texte sélectionné, votre instruction, puis la réponse Ollama streamée en direct.
 
-Le HUD disparaît automatiquement une fois le traitement terminé.`,
+Le HUD disparaît automatiquement une fois le traitement terminé. Un bouton ✕ dans son coin, ou la touche Échap, annule l'opération en cours.`,
+      },
+      {
+        heading: "Options de la barre de menu",
+        body: `L'icône murmurai dans la barre de menu donne accès à tous les réglages :
+
+• Transcript key / Agent key — Touche déclenchant chaque mode
+• Transcript icon — Icône ajoutée devant le texte collé, ou "Aucun"
+• Model — Taille du modèle Whisper
+• Microphone — Périphérique d'entrée, ou le défaut système
+• Sound effects — Sons de feedback au début et à la fin d'une opération
+• Mute while recording — Coupe les haut-parleurs pendant l'enregistrement
+• Launch at login — Lance murmurai à l'ouverture de session
+• Ollama — État de connexion, modèle Agent, rafraîchissement
+• Edit Settings… — Ouvre config.json ; les modifications sont appliquées à chaud
+• Open Logs… — Ouvre le fichier de log`,
       },
       {
         heading: "Cas d'usage",
@@ -225,18 +242,22 @@ tail -f ~/Library/Logs/murmurai/murmurai.log`,
     content: [
       {
         heading: "Fichier de configuration",
-        body: `murmurai se configure via le fichier ~/.config/murmurai/config.json. Ce fichier est créé automatiquement au premier lancement avec les valeurs par défaut. Vous pouvez le modifier pour personnaliser le comportement de murmurai.`,
+        body: `murmurai se configure via le fichier ~/.config/murmurai/config.json. Les valeurs absentes retombent sur les défauts ; le fichier est matérialisé quand vous ouvrez "Edit Settings…" ou changez un réglage depuis la barre de menu.
+
+Les modifications du fichier sont prises en compte à chaud : murmurai surveille config.json et réapplique vos changements dans les deux secondes suivant la sauvegarde, sans redémarrage. Les raccourcis, l'icône de transcript, le microphone, le modèle Ollama et les interrupteurs prennent effet immédiatement ; changer whisper_model recharge le modèle en arrière-plan. Une valeur invalide (raccourci inconnu, même touche pour les deux actions, modèle Whisper inconnu) est ignorée et l'ancien réglage conservé — un ⚠️ apparaît alors devant "Edit Settings…".`,
         code: `{
-  "model_size": "small",
-  "language": "fr",
-  "hotkey_transcript": "right_option",
-  "hotkey_agent": "right_command",
-  "ollama_model": "llama3",
+  "whisper_model": "small",
+  "transcript_key": "Right Option",
+  "agent_key": "Right Command",
+  "agent_model": "gpt-oss:20b",
+  "transcript_icon": "🎙️",
+  "microphone": "",
+  "sounds": true,
+  "mute_while_recording": false,
+  "launch_at_login": false,
   "jargon": {
-    "commettre": "commit",
-    "pousser": "push",
-    "tirer": "pull",
-    "fusionner": "merge"
+    "kubectl": ["kubecétéèle"],
+    "terraform": ["terraformer"]
   }
 }`,
       },
@@ -260,48 +281,62 @@ Le modèle par défaut est "small", qui offre le meilleur compromis entre vitess
 
 1. Depuis la barre de menu — Cliquez sur l'icône murmurai dans la barre de menu et sélectionnez la taille de modèle souhaitée. Le changement est immédiat.
 
-2. Via le fichier de configuration — Modifiez la clé "model_size" dans ~/.config/murmurai/config.json.
+2. Via le fichier de configuration — Modifiez la clé "whisper_model" dans ~/.config/murmurai/config.json.
 
 Le modèle sera téléchargé automatiquement si nécessaire (la première fois uniquement).`,
         code: `# Dans ~/.config/murmurai/config.json
 # Changer "small" par "tiny", "base", "medium" ou "large-v3"
-"model_size": "small"`,
+"whisper_model": "small"`,
       },
       {
         heading: "Touche de raccourci",
-        body: `Les raccourcis clavier sont configurables via le fichier ~/.config/murmurai/config.json :
+        body: `Les raccourcis clavier se changent depuis la barre de menu (sous-menus "Transcript key" et "Agent key") ou directement dans ~/.config/murmurai/config.json :
 
-• hotkey_transcript — Touche pour le Mode Transcript (défaut : Option droite). Maintenez pour dicter, relâchez pour transcrire et coller.
-• hotkey_agent — Touche pour le Mode Agent (défaut : Command droite). Maintenez pour dicter une instruction, relâchez pour envoyer à Ollama.
+• transcript_key — Touche pour le Mode Transcript (défaut : Right Option). Maintenez pour dicter, relâchez pour transcrire et coller.
+• agent_key — Touche pour le Mode Agent (défaut : Right Command). Maintenez pour dicter une instruction, relâchez pour envoyer à Ollama.
 
-Il n'est plus nécessaire de modifier le code source pour changer les raccourcis.`,
+Les valeurs acceptées sont des touches modificatrices : Right Option, Right Command, Right Control, Left Option, Left Command, Left Control, Right Shift, Caps Lock. Assigner la même touche aux deux modes est refusé.
+
+Échap annule à tout moment l'enregistrement, la transcription ou la requête Agent en cours.`,
         code: `# Dans ~/.config/murmurai/config.json
-"hotkey_transcript": "right_option",
-"hotkey_agent": "right_command"`,
+"transcript_key": "Right Option",
+"agent_key": "Right Command"`,
       },
       {
         heading: "Dictionnaire de jargon",
-        body: `murmurai intègre un dictionnaire de ~100 termes de jargon technique pour corriger les erreurs courantes de transcription bilingue FR/EN. Par exemple :
+        body: `murmurai intègre un dictionnaire de ~100 termes de jargon technique pour corriger les termes anglais francisés par Whisper. Par exemple :
 
-• "commettre" → "commit"
-• "pousser" → "push"
-• "tirer" → "pull"
-• "fusionner" → "merge"
-• "déployer" → "deploy"
+• "commiter" → "commit"
+• "pousher" → "push"
+• "débugger" → "debug"
+• "deployer" → "deploy"
 
-Les termes sont appliqués en post-traitement via une fusion locale (sans Ollama). Vous pouvez ajouter vos propres termes dans la section "jargon" du fichier de configuration :`,
+Chaque entrée associe un terme anglais (la forme correcte à conserver) à la liste des variantes françaises que Whisper peut produire. La correspondance est insensible à la casse, et la correction est purement locale — sans Ollama ni réseau.
+
+Le dictionnaire intégré (murmurai/jargon.py) est mis à jour avec l'application. Vos ajouts dans config.json sont fusionnés par-dessus : les nouveaux termes sont ajoutés, les variantes d'un terme existant sont concaténées sans doublon, et aucun terme intégré n'est supprimé par votre config — les mises à jour peuvent donc enrichir le dictionnaire sans écraser vos entrées.`,
         code: `# Dans ~/.config/murmurai/config.json
 "jargon": {
-  "commettre": "commit",
-  "pousser": "push",
-  "mon terme": "my_term"
+  "kubectl": ["kubecétéèle", "kubeucétéèle"],
+  "terraform": ["terraformer"],
+  "Datadog": ["datadogue"]
 }`,
       },
       {
-        heading: "Langue de transcription",
-        body: `La langue de transcription est configurable dans ~/.config/murmurai/config.json via la clé "language". murmurai supporte la transcription bilingue FR/EN nativement, avec fusion locale de jargon.
+        heading: "Microphone, sons et démarrage",
+        body: `Quatre réglages complètent la configuration, tous pilotables depuis la barre de menu :
 
-faster-whisper supporte plus de 90 langues. La détection automatique est également disponible si aucune langue n'est spécifiée.`,
+• microphone — Nom du périphérique d'entrée ; "" suit le périphérique par défaut de macOS. Le périphérique est mémorisé par son nom et non par son index, car les index sont réattribués à chaque branchement. Un micro configuré mais débranché retombe sur le défaut système jusqu'à sa reconnexion, et le sous-menu se rafraîchit tout seul quand vous branchez un casque.
+
+• sounds — Sons système courts au début et à la fin d'une opération (défaut : activé), pour utiliser le push-to-talk sans regarder l'écran.
+
+• mute_while_recording — Coupe les haut-parleurs pendant l'enregistrement pour que la lecture en cours ne soit pas captée par le micro (défaut : désactivé). Des haut-parleurs que vous aviez déjà coupés vous-même restent coupés.
+
+• launch_at_login — Lance murmurai à l'ouverture de session, via un LaunchAgent utilisateur (défaut : désactivé). Indisponible lorsque murmurai tourne depuis les sources : il n'y a alors pas de bundle .app à relancer.`,
+        code: `# Dans ~/.config/murmurai/config.json
+"microphone": "",
+"sounds": true,
+"mute_while_recording": false,
+"launch_at_login": false`,
       },
       {
         heading: "Modèles Ollama",
@@ -309,9 +344,9 @@ faster-whisper supporte plus de 90 langues. La détection automatique est égale
 
 Le modèle Ollama utilisé par le Mode Agent est sélectionnable dynamiquement depuis la barre de menu de murmurai. murmurai détecte automatiquement les modèles disponibles dans votre installation Ollama.
 
-Vous pouvez également définir un modèle par défaut dans le fichier de configuration :`,
+Vous pouvez également définir le modèle dans le fichier de configuration via la clé "agent_model" :`,
         code: `# Dans ~/.config/murmurai/config.json
-"ollama_model": "llama3"`,
+"agent_model": "gpt-oss:20b"`,
       },
     ],
     prev: { slug: "utilisation", label: "Utilisation" },
@@ -341,19 +376,22 @@ Vous pouvez également définir un modèle par défaut dans le fichier de config
         code: `murmurai/
 ├── __init__.py       # Point d'entrée du package
 ├── app.py            # Application principale, boucle push-to-talk
-│                     # Détection hotkey, orchestration des modules
+│                     # CGEventTap, barre de menu, orchestration
+├── config.py         # Chargement / sauvegarde de config.json
 ├── recorder.py       # Capture audio via sounddevice
-│                     # Gestion du microphone et du buffer
+│                     # Buffer, niveau RMS pour le waveform
+├── audio_devices.py  # Énumération des micros, résolution nom → index
 ├── transcriber.py    # Transcription via faster-whisper
-│                     # Configuration du modèle, streaming
-├── paster.py         # Collage automatique via System Events
-│                     # Simulation de Cmd+V à la position curseur
-├── agent.py          # Mode Agent — communication avec Ollama
-│                     # Streaming réponses, annulation
-├── hud.py            # HUD overlay — affichage statut
-│                     # (recording, transcribing, processing)
-├── jargon.py         # Fusion bilingue FR/EN
-│                     # Dictionnaire de ~100 termes techniques
+├── jargon.py         # Dictionnaire de ~100 termes techniques
+│                     # Correction des termes anglais francisés
+├── paster.py         # Collage via NSPasteboard + CGEvent (Cmd+V)
+│                     # Lecture de la sélection via l'API Accessibility
+├── fusion.py         # Mode Agent — client Ollama
+│                     # Streaming des réponses, annulation
+├── hud.py            # HUD overlay — waveform, statut, annulation
+├── sounds.py         # Sons système de feedback
+├── system_audio.py   # Coupure des haut-parleurs pendant l'enregistrement
+├── login_item.py     # Lancement au login (LaunchAgent)
 └── (pyproject.toml)  # Métadonnées, dépendances, entry point`,
       },
       {
@@ -364,9 +402,9 @@ Vous pouvez également définir un modèle par défaut dans le fichier de config
 
 2. transcriber.py — Reçoit les segments audio et les transcrit via faster-whisper en mode streaming. Les résultats partiels sont accumulés.
 
-3. jargon.py — Applique la fusion bilingue FR/EN et corrige les termes techniques via le dictionnaire de jargon.
+3. jargon.py — Corrige les termes anglais francisés via le dictionnaire de jargon.
 
-4. paster.py — Prend le texte transcrit final et simule un Cmd+V pour le coller à la position du curseur.
+4. paster.py — Écrit le texte dans NSPasteboard puis émet un Cmd+V synthétique via CGEvent pour le coller à la position du curseur, avant de restaurer le presse-papier précédent.
 
 5. app.py — Orchestre tout le pipeline : détecte l'appui/relâchement de la touche, démarre/arrête l'enregistrement, lance la transcription et déclenche le collage.`,
       },
@@ -378,7 +416,7 @@ Vous pouvez également définir un modèle par défaut dans le fichier de config
 
 2. transcriber.py — Transcrit l'instruction vocale.
 
-3. agent.py — Récupère le texte sélectionné dans l'application active, construit un prompt combinant l'instruction vocale et la sélection, envoie le tout au modèle Ollama local. La réponse est streamée en temps réel.
+3. fusion.py — Reçoit le texte sélectionné (lu par paster.py via l'API Accessibility au moment où vous appuyez sur la touche), construit un prompt combinant l'instruction vocale et la sélection, et envoie le tout au modèle Ollama local. La réponse est streamée en temps réel.
 
 4. paster.py — Remplace la sélection originale par la réponse d'Ollama.
 
@@ -386,14 +424,14 @@ Vous pouvez également définir un modèle par défaut dans le fichier de config
       },
       {
         heading: "Système de jargon",
-        body: `Le module jargon.py gère la fusion bilingue FR/EN en post-traitement :
+        body: `Le module jargon.py corrige le jargon technique en post-traitement :
 
-1. Le texte transcrit par Whisper est analysé mot par mot.
-2. Chaque mot est comparé au dictionnaire de ~100 termes techniques intégrés.
-3. Les termes français correspondant à du jargon technique anglais sont remplacés (ex. "commettre" → "commit").
+1. Le dictionnaire intégré est fusionné avec les entrées utilisateur de config.json, relu à chaque transcription — une modification du fichier prend donc effet immédiatement.
+2. Chaque variante francisée est cherchée dans le texte par expression régulière, sans tenir compte de la casse.
+3. Les correspondances sont remplacées par le terme anglais canonique (ex. "commiter" → "commit").
 4. La structure de phrase française est préservée — seuls les termes techniques sont corrigés.
 
-Le dictionnaire intégré couvre les termes courants du développement logiciel, DevOps, et de l'infrastructure. Les utilisateurs peuvent ajouter leurs propres termes via ~/.config/murmurai/config.json.`,
+Le dictionnaire intégré couvre les termes courants du développement logiciel, DevOps, et de l'infrastructure. Il ne contient que des variantes franglaises : les vrais mots français en sont exclus, car les réécrire corromprait des phrases ordinaires.`,
       },
       {
         heading: "Dépendances",
@@ -508,7 +546,7 @@ murmurai
 • murmurai/app.py — Logique principale, boucle push-to-talk, détection hotkey
 • murmurai/recorder.py — Capture audio, gestion du microphone
 • murmurai/transcriber.py — Transcription Whisper, configuration du modèle
-• murmurai/paster.py — Collage automatique via System Events
+• murmurai/paster.py — Collage via NSPasteboard + CGEvent, lecture de la sélection
 • pyproject.toml — Dépendances et métadonnées du package
 • murmurai.spec — Configuration PyInstaller pour le build standalone
 • Makefile — Commandes de build et d'installation`,
